@@ -3,37 +3,39 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CSDC-K | Kuzey</title>
+  <title>Kuzey Ceylan | CSDC-K</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-
     :root {
-      --bg: #0a0a0f;
-      --surface: #12121a;
-      --surface2: #1a1a2e;
-      --border: #ffffff0a;
+      --bg: #07070a;
+      --surface-1: #0f0f15;
+      --surface-2: #161622;
+      --border: rgba(255, 255, 255, 0.07);
+      --border-hover: rgba(139, 92, 246, 0.3);
       --accent: #7c3aed;
-      --accent2: #a855f7;
-      --accent-glow: #7c3aed40;
-      --text: #e2e8f0;
-      --text-dim: #94a3b8;
-      --rust: #f97316;
-      --green: #22c55e;
+      --accent-light: #a78bfa;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
     }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
     html { scroll-behavior: smooth; }
 
     body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'Inter', sans-serif;
+      background-color: var(--bg);
+      color: var(--text-main);
+      font-family: 'Plus Jakarta Sans', sans-serif;
       overflow-x: hidden;
       line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
     }
 
-    canvas#stars {
+    /* BACKGROUND CANVAS */
+    canvas#bg-canvas {
       position: fixed;
       top: 0; left: 0;
       width: 100%; height: 100%;
@@ -41,9 +43,12 @@
       pointer-events: none;
     }
 
-    .content {
+    .container {
       position: relative;
       z-index: 1;
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
     }
 
     /* NAV */
@@ -51,366 +56,325 @@
       position: fixed;
       top: 0; left: 0; right: 0;
       z-index: 100;
-      backdrop-filter: blur(20px);
-      background: #0a0a0fcc;
+      background: rgba(7, 7, 10, 0.8);
+      backdrop-filter: blur(16px);
       border-bottom: 1px solid var(--border);
-      padding: 1rem 2rem;
+      padding: 1rem 0;
+    }
+
+    .nav-inner {
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
 
-    nav .logo {
+    .logo {
       font-family: 'JetBrains Mono', monospace;
       font-weight: 700;
-      font-size: 1.3rem;
-      background: linear-gradient(135deg, var(--accent), var(--rust));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    nav .links { display: flex; gap: 2rem; }
-
-    nav .links a {
-      color: var(--text-dim);
+      font-size: 1.1rem;
+      color: var(--text-main);
       text-decoration: none;
-      font-size: 0.9rem;
-      font-weight: 400;
-      transition: color 0.3s;
+      letter-spacing: -0.02em;
     }
 
-    nav .links a:hover { color: var(--accent2); }
+    .logo span { color: var(--accent-light); }
+
+    .nav-links { display: flex; gap: 1.8rem; list-style: none; }
+
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.88rem;
+      font-weight: 500;
+      transition: color 0.2s ease;
+    }
+
+    .nav-links a:hover { color: var(--text-main); }
 
     /* HERO */
     .hero {
-      min-height: 100vh;
+      min-height: 85vh;
       display: flex;
       flex-direction: column;
       justify-content: center;
-      align-items: center;
-      text-align: center;
-      padding: 2rem;
+      align-items: flex-start;
+      padding-top: 6rem;
     }
 
-    .hero .avatar {
-      width: 130px; height: 130px;
+    .avatar-wrapper {
+      position: relative;
+      margin-bottom: 1.8rem;
+    }
+
+    .avatar {
+      width: 100px;
+      height: 100px;
       border-radius: 50%;
-      border: 3px solid var(--accent);
-      box-shadow: 0 0 40px var(--accent-glow);
-      margin-bottom: 2rem;
-      animation: float 6s ease-in-out infinite;
+      border: 1px solid var(--border);
+      box-shadow: 0 0 30px rgba(124, 58, 237, 0.15);
+      object-fit: cover;
     }
 
-    @keyframes float {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-12px); }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.35rem 0.8rem;
+      border-radius: 99px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      color: var(--accent-light);
+      margin-bottom: 1.2rem;
     }
 
     .hero h1 {
-      font-size: clamp(2.5rem, 6vw, 4.5rem);
+      font-size: clamp(2.4rem, 5vw, 3.8rem);
       font-weight: 800;
       letter-spacing: -0.03em;
-      margin-bottom: 0.5rem;
-    }
-
-    .hero h1 span {
-      background: linear-gradient(135deg, var(--accent2), var(--rust));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .hero .tagline {
-      font-family: 'JetBrains Mono', monospace;
-      color: var(--text-dim);
-      font-size: 1rem;
+      line-height: 1.1;
       margin-bottom: 1rem;
     }
 
-    .hero .story {
-      max-width: 600px;
-      color: var(--text-dim);
-      font-size: 1.05rem;
-      line-height: 1.8;
+    .hero p.bio {
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      max-width: 620px;
+      font-weight: 400;
+      line-height: 1.7;
       margin-bottom: 2rem;
     }
 
-    .hero .cta-row { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; }
+    .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; }
 
     .btn {
       display: inline-flex;
       align-items: center;
       gap: 0.5rem;
-      padding: 0.75rem 1.8rem;
-      border-radius: 999px;
-      text-decoration: none;
+      padding: 0.7rem 1.4rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
       font-weight: 600;
-      font-size: 0.95rem;
-      transition: all 0.3s;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      cursor: pointer;
     }
 
     .btn-primary {
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      color: #fff;
-      box-shadow: 0 4px 25px var(--accent-glow);
+      background: var(--text-main);
+      color: var(--bg);
     }
 
-    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 35px var(--accent-glow); }
-
-    .btn-outline {
-      border: 1px solid #ffffff20;
-      color: var(--text);
-      background: transparent;
+    .btn-primary:hover {
+      background: #ffffff;
+      transform: translateY(-2px);
     }
 
-    .btn-outline:hover { border-color: var(--accent); color: var(--accent2); }
+    .btn-secondary {
+      background: var(--surface-1);
+      color: var(--text-main);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--border-hover);
+      transform: translateY(-2px);
+    }
 
     /* SECTIONS */
-    section {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 5rem 2rem;
-    }
+    section { padding: 5rem 0; }
+
+    .section-header { margin-bottom: 2.5rem; }
 
     .section-title {
-      font-size: 2rem;
-      font-weight: 800;
-      margin-bottom: 0.5rem;
+      font-size: 1.6rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
     }
 
-    .section-title span {
-      background: linear-gradient(135deg, var(--accent2), var(--rust));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .section-sub {
-      color: var(--text-dim);
-      margin-bottom: 3rem;
-      font-size: 1rem;
-    }
-
-    /* PROJECTS */
-    .projects-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-      gap: 1.5rem;
-    }
-
-    .project-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 1.8rem;
-      transition: all 0.4s;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .project-card::before {
+    .section-title::before {
       content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 2px;
-      background: linear-gradient(90deg, transparent, var(--accent), transparent);
-      opacity: 0;
-      transition: opacity 0.4s;
+      display: inline-block;
+      width: 4px;
+      height: 1.2rem;
+      background: var(--accent);
+      border-radius: 2px;
     }
 
-    .project-card:hover {
-      border-color: #ffffff15;
-      transform: translateY(-4px);
-      box-shadow: 0 20px 40px #00000060;
+    /* GRID & CARDS */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+      gap: 1.25rem;
     }
 
-    .project-card:hover::before { opacity: 1; }
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.25rem;
+    }
 
-    .project-card .card-head {
+    .card {
+      background: var(--surface-1);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      transition: all 0.25s ease;
+      position: relative;
+    }
+
+    .card:hover {
+      border-color: var(--border-hover);
+      transform: translateY(-3px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .card-header {
       display: flex;
       justify-content: space-between;
-      align-items: center;
+      align-items: flex-start;
       margin-bottom: 0.8rem;
     }
 
-    .project-card h3 {
+    .card-title {
       font-size: 1.15rem;
-      font-weight: 700;
+      font-weight: 600;
+      color: var(--text-main);
     }
 
-    .project-card h3 a {
-      color: var(--text);
+    .card-title a {
+      color: inherit;
       text-decoration: none;
-      transition: color 0.3s;
     }
 
-    .project-card h3 a:hover { color: var(--accent2); }
+    .card-title a:hover { color: var(--accent-light); }
 
-    .project-card .lang-badge {
+    .tag {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 0.75rem;
-      padding: 0.25rem 0.7rem;
-      border-radius: 999px;
-      background: var(--surface2);
-      color: var(--text-dim);
-      border: 1px solid #ffffff10;
+      font-size: 0.72rem;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      background: var(--surface-2);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
     }
 
-    .project-card p {
-      color: var(--text-dim);
-      font-size: 0.9rem;
+    .card p {
+      color: var(--text-muted);
+      font-size: 0.88rem;
       line-height: 1.6;
     }
 
-    /* AWARDS */
-    .awards-list {
+    .tech-stack-mini {
+      display: flex;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+      margin-top: 1rem;
+    }
+
+    .tech-pill {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* TIMELINE / EXPERIENCE */
+    .timeline {
       display: flex;
       flex-direction: column;
-      gap: 1rem;
+      gap: 1.2rem;
     }
 
-    .award-item {
+    .timeline-item {
       display: flex;
-      align-items: flex-start;
-      gap: 1rem;
-      padding: 1.3rem 1.5rem;
-      background: var(--surface);
+      gap: 1.2rem;
+      padding: 1.25rem;
+      background: var(--surface-1);
       border: 1px solid var(--border);
       border-radius: 12px;
-      transition: all 0.3s;
+      transition: border-color 0.2s ease;
     }
 
-    .award-item:hover {
-      border-color: #ffffff15;
-      transform: translateX(6px);
-    }
+    .timeline-item:hover { border-color: var(--border-hover); }
 
-    .award-icon {
-      font-size: 1.6rem;
-      flex-shrink: 0;
-    }
-
-    .award-item h4 { font-size: 1rem; margin-bottom: 0.2rem; }
-    .award-item p { color: var(--text-dim); font-size: 0.85rem; }
-
-    /* SKILLS */
-    .skills-section { display: flex; flex-direction: column; gap: 2.5rem; }
-
-    .skill-group h3 {
+    .timeline-date {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 0.85rem;
-      color: var(--accent2);
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      margin-bottom: 1rem;
+      font-size: 0.8rem;
+      color: var(--accent-light);
+      white-space: nowrap;
+      min-width: 100px;
     }
 
-    .skill-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.6rem;
+    .timeline-content h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 0.2rem;
     }
 
-    .skill-tag {
-      padding: 0.5rem 1rem;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      font-size: 0.85rem;
-      color: var(--text-dim);
-      transition: all 0.3s;
-      cursor: default;
+    .timeline-content p {
+      font-size: 0.88rem;
+      color: var(--text-muted);
     }
 
-    .skill-tag:hover {
-      border-color: var(--accent);
-      color: var(--text);
-      box-shadow: 0 0 15px var(--accent-glow);
-    }
-
-    /* FEATURED */
-    .featured-grid {
+    /* SKILLS LIST */
+    .skills-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-      gap: 1.5rem;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
     }
 
-    .featured-card {
-      background: linear-gradient(135deg, var(--surface), var(--surface2));
-      border: 1px solid #ffffff0a;
-      border-radius: 16px;
-      padding: 2rem;
-      transition: all 0.4s;
+    .skill-category h4 {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      margin-bottom: 0.8rem;
+      letter-spacing: 0.05em;
     }
 
-    .featured-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 20px 40px #00000060;
-    }
+    .skill-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; }
 
-    .featured-card .emoji { font-size: 2rem; margin-bottom: 1rem; }
-    .featured-card h3 { font-size: 1.1rem; margin-bottom: 0.6rem; }
-    .featured-card p { color: var(--text-dim); font-size: 0.88rem; line-height: 1.7; }
-
-    /* CONTACT */
-    .contact-section {
-      text-align: center;
-      padding-bottom: 6rem;
-    }
-
-    .contact-links {
-      display: flex;
-      justify-content: center;
-      gap: 1.5rem;
-      flex-wrap: wrap;
-      margin-top: 2rem;
-    }
-
-    .contact-link {
-      display: flex;
-      align-items: center;
-      gap: 0.6rem;
-      padding: 0.8rem 1.5rem;
-      background: var(--surface);
+    .skill-tags span {
+      font-size: 0.82rem;
+      padding: 0.35rem 0.7rem;
+      background: var(--surface-1);
       border: 1px solid var(--border);
-      border-radius: 12px;
-      color: var(--text);
-      text-decoration: none;
-      font-size: 0.95rem;
-      transition: all 0.3s;
-    }
-
-    .contact-link:hover {
-      border-color: var(--accent);
-      box-shadow: 0 0 20px var(--accent-glow);
-      transform: translateY(-2px);
+      border-radius: 6px;
+      color: var(--text-muted);
     }
 
     /* FOOTER */
     footer {
-      text-align: center;
-      padding: 2rem;
       border-top: 1px solid var(--border);
+      padding: 2.5rem 0;
       color: var(--text-dim);
-      font-size: 0.8rem;
+      font-size: 0.85rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
     }
 
-    /* RESPONSIVE */
-    @media (max-width: 768px) {
-      nav .links { gap: 1rem; }
-      nav .links a { font-size: 0.8rem; }
-      .projects-grid, .featured-grid { grid-template-columns: 1fr; }
+    footer a { color: var(--text-muted); text-decoration: none; }
+    footer a:hover { color: var(--text-main); }
+
+    @media (max-width: 640px) {
+      .nav-links { display: none; }
+      .hero { min-height: 70vh; }
+      .timeline-item { flex-direction: column; gap: 0.4rem; }
+      .timeline-date { min-width: auto; }
     }
 
-    @media (max-width: 480px) {
-      nav { padding: 0.8rem 1rem; }
-      nav .links { display: none; }
-      section { padding: 3rem 1.2rem; }
-    }
-
-    /* SCROLL REVEAL */
+    /* REVEAL ANIMATION */
     .reveal {
       opacity: 0;
-      transform: translateY(30px);
-      transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+      transform: translateY(20px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
     }
 
     .reveal.visible {
@@ -421,112 +385,196 @@
 </head>
 <body>
 
-<canvas id="stars"></canvas>
+<canvas id="bg-canvas"></canvas>
 
-<div class="content">
+<nav>
+  <div class="container nav-inner">
+    <a href="#" class="logo">&lt;<span>CSDC-K</span> /&gt;</a>
+    <ul class="nav-links">
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#experience">Experience & Awards</a></li>
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </div>
+</nav>
 
-  <!-- NAV -->
-  <nav>
-    <div class="logo">&lt;CSDC-K /&gt;</div>
-    <div class="links">
-      <a href="#about">About</a>
-      <a href="#featured">Research</a>
-      <a href="#projects">Projects</a>
-      <a href="#skills">Skills</a>
-      <a href="#awards">Awards</a>
-      <a href="#contact">Contact</a>
-    </div>
-  </nav>
+<main class="container">
 
   <!-- HERO -->
-  <section class="hero" id="about">
-    <img class="avatar" src="https://avatars.githubusercontent.com/u/100463228?v=4" alt="CSDC-K Avatar">
-    <h1>Hey, I'm <span>Kuzey</span></h1>
-    <p class="tagline">The Ruler Of Rust 🦀 &nbsp;|&nbsp; Türkiye 🇹🇷</p>
-    <p class="story">
-      A self-taught student who has been on the software journey since the age of 12 — without ever purchasing a single resource. I build projects in robotics, artificial intelligence, and systems programming.
+  <section class="hero">
+    <div class="avatar-wrapper">
+      <img class="avatar" src="https://github.com/CSDC-K.png" alt="Kuzey Ceylan Profile Picture">
+    </div>
+    <div class="hero-badge">Systems & Autonomous Software Developer</div>
+    <h1>Kuzey Ceylan</h1>
+    <p class="bio">
+      I develop low-level system architectures, autonomous robotic control systems, and local AI runtimes, focusing primarily on Rust and Python.
     </p>
-    <div class="cta-row">
-      <a href="https://github.com/CSDC-K" target="_blank" class="btn btn-primary">⚡ GitHub</a>
-      <a href="mailto:contact@kuzey.dev" class="btn btn-outline">✉️ Contact</a>
+    <div class="hero-actions">
+      <a href="https://github.com/CSDC-K" target="_blank" rel="noopener" class="btn btn-primary">
+        GitHub
+      </a>
+      <a href="mailto:contact@kuzey.dev" class="btn btn-secondary">
+        Email Me
+      </a>
     </div>
   </section>
 
-  <!-- FEATURED RESEARCH -->
-  <section id="featured">
-    <h2 class="section-title reveal"><span>🚀 Research</span> & Projects</h2>
-    <p class="section-sub reveal">Main areas I'm focused on</p>
-    <div class="featured-grid">
-      <div class="featured-card reveal">
-        <div class="emoji">🏎️</div>
-        <h3>Autonomous Vehicle</h3>
-        <p>High-performance autonomous system for the 18th International MEB Robot Competition using Raspberry Pi 5, Hailo-8 AI Accelerator and Rust. PID control runs in Rust, YOLOv8 inference on Hailo via PyO3 bridge.</p>
-      </div>
-      <div class="featured-card reveal">
-        <div class="emoji">🦀</div>
-        <h3>ORYXIS — LLM Acceleration</h3>
-        <p>An experimental project focused on running LLMs with memory-efficient and fast execution on AMD (ROCm/Vulkan) and NVIDIA (Jetson) hardware using Rust.</p>
-      </div>
-      <div class="featured-card reveal">
-        <div class="emoji">🤖</div>
-        <h3>Mini-Sumo & Maze Robotics</h3>
-        <p>Award-winning robotics projects with low-level C++/C# control and real-time sensor fusion.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- PROJECTS -->
+  <!-- FEATURED PROJECTS -->
   <section id="projects">
-    <h2 class="section-title reveal"><span>📦 Pinned</span> Repositories</h2>
-    <p class="section-sub reveal">My pinned projects on GitHub</p>
-    <div class="projects-grid">
+    <div class="section-header reveal">
+      <h2 class="section-title">Featured Work</h2>
+    </div>
 
-      <div class="project-card reveal">
-        <div class="card-head">
-          <h3><a href="https://github.com/CSDC-K/Oryxis" target="_blank">Oryxis</a></h3>
-          <span class="lang-badge">Rust</span>
+    <div class="grid-2">
+      
+      <div class="card reveal">
+        <div class="card-header">
+          <h3 class="card-title"><a href="https://github.com/CSDC-K/Oryxis" target="_blank">Oryxis</a></h3>
+          <span class="tag">Rust / Systems</span>
         </div>
-        <p>Rust-based LLM acceleration project — AMD ROCm/Vulkan & NVIDIA Jetson support.</p>
+        <p>
+          An experimental engine built entirely in Rust, designed to run large language models (LLMs) on local hardware. Focuses on memory-efficient execution layers for AMD (ROCm/Vulkan) and NVIDIA (Jetson) architectures.
+        </p>
+        <div class="tech-stack-mini">
+          <span class="tech-pill">Rust</span> • 
+          <span class="tech-pill">ROCm</span> • 
+          <span class="tech-pill">Vulkan</span>
+        </div>
       </div>
 
-      <div class="project-card reveal">
-        <div class="card-head">
-          <h3><a href="https://github.com/CSDC-K/EWUT" target="_blank">EWUT</a></h3>
-          <span class="lang-badge">Rust ⭐1</span>
+      <div class="card reveal">
+        <div class="card-header">
+          <h3 class="card-title">Trigox</h3>
+          <span class="tag">Desktop / GUI</span>
         </div>
-        <p>A tool / library project built with Rust.</p>
+        <p>
+          A modern desktop application built on the Tauri framework, using TypeScript for the client side and a high-performance Rust backend to process local data pipelines with minimal resource consumption.
+        </p>
+        <div class="tech-stack-mini">
+          <span class="tech-pill">Tauri</span> • 
+          <span class="tech-pill">TypeScript</span> • 
+          <span class="tech-pill">Rust</span>
+        </div>
       </div>
 
-      <div class="project-card reveal">
-        <div class="card-head">
-          <h3><a href="https://github.com/CSDC-K/Multiple-Remote-Control-System" target="_blank">MRCS</a></h3>
-          <span class="lang-badge">Python ⭐1</span>
+      <div class="card reveal">
+        <div class="card-header">
+          <h3 class="card-title">MEDA (Medical Exercise Interface)</h3>
+          <span class="tag">Software</span>
         </div>
-        <p>Manage multiple computers on the same network: send messages, transfer files, share your screen and more.</p>
+        <p>
+          A healthcare software project bridging a physician interface with patient tracking. Designed with a dynamic UI in Python (CustomTkinter) and backed by secure data processing services written in Rust.
+        </p>
+        <div class="tech-stack-mini">
+          <span class="tech-pill">Python</span> • 
+          <span class="tech-pill">CustomTkinter</span> • 
+          <span class="tech-pill">Rust</span>
+        </div>
       </div>
 
-      <div class="project-card reveal">
-        <div class="card-head">
-          <h3><a href="https://github.com/CSDC-K/MarketUiPy" target="_blank">MarketUiPy</a></h3>
-          <span class="lang-badge">Python</span>
+      <div class="card reveal">
+        <div class="card-header">
+          <h3 class="card-title">Autonomous Vehicle Platform</h3>
+          <span class="tag">Learning / Experience</span>
         </div>
-        <p>Market management system UI built with Python.</p>
+        <p>
+          My first foray into autonomous systems for the 18th International MEB Robot Competition. While the project ultimately failed to meet its functional goals, designing a Rust-based PID controller and attempting to integrate a Hailo-8 AI accelerator (YOLOv8) via PyO3 on a Raspberry Pi 5 served as an invaluable, hands-on learning experience in hardware integration.
+        </p>
+        <div class="tech-stack-mini">
+          <span class="tech-pill">Rust</span> • 
+          <span class="tech-pill">Raspberry Pi 5</span> • 
+          <span class="tech-pill">Hailo-8</span> • 
+          <span class="tech-pill">PyO3</span>
+        </div>
       </div>
 
-      <div class="project-card reveal">
-        <div class="card-head">
-          <h3><a href="https://github.com/CSDC-K/Vortex-Portal" target="_blank">Vortex-Portal</a></h3>
-          <span class="lang-badge">Svelte</span>
+    </div>
+
+    <!-- REPOSITORIES GRID -->
+    <div style="margin-top: 2rem;"></div>
+    <div class="grid-3">
+      <div class="card reveal">
+        <div class="card-header">
+          <h3 class="card-title"><a href="https://github.com/CSDC-K/EWUT" target="_blank">Makereadme</a></h3>
+          <span class="tag">Rust</span>
         </div>
-        <p>A web portal project built with Svelte.</p>
+        <p>Agentic flow to making readme files for projects.</p>
       </div>
 
-      <div class="project-card reveal">
-        <div class="card-head">
-          <h3><a href="https://github.com/CSDC-K?tab=repositories" target="_blank">+23 more</a></h3>
-          <span class="lang-badge">28 repos</span>
+      <div class="card reveal">
+        <div class="card-header">
+          <h3 class="card-title"><a href="https://github.com/CSDC-K/Multiple-Remote-Control-System" target="_blank">MRCS</a></h3>
+          <span class="tag">Python/Rust</span>
         </div>
-        <p>Browse all my repositories →</p>
+        <p>A tool for remote management, screen sharing, and file transfer across devices on a local network.</p>
+      </div>
+
+  <div class="card reveal">
+    <div class="card-header">
+      <h2 class="card-title"><a href="https://github.com/CSDC-K/TheSoundOfYourHardware" target="_blank">SoundOfYourHardware </a></h2>
+      <span class="tag">Tauri</span>
+    </div>
+    <p>a fun project about when your hardware usage gets too high it plays some funny sounds you've chosen</p>
+  </div>
+    </div>
+  </section>
+
+  <!-- EXPERIENCE & AWARDS -->
+  <section id="experience">
+    <div class="section-header reveal">
+      <h2 class="section-title">Experience & Awards</h2>
+    </div>
+
+    <div class="timeline">
+
+      <div class="timeline-item reveal">
+        <div class="timeline-date">2026</div>
+        <div class="timeline-content">
+          <h3>1st Place Winner — Hack Club Horizons Arcana (Singapore)</h3>
+          <p>Secured 1st place at the international coding conference and hackathon organized by the Hack Club global developer community.</p>
+        </div>
+      </div>
+
+      <div class="timeline-item reveal">
+        <div class="timeline-date">2026</div>
+        <div class="timeline-content">
+          <h3>KodeLig '26 — Kocaeli National Robotics Competition</h3>
+          <p>Participant in the national robotics technology event focused on autonomous systems.</p>
+        </div>
+      </div>
+      
+      <div class="timeline-item reveal">
+        <div class="timeline-date">2026</div>
+        <div class="timeline-content">
+          <h3>18th International MEB Robot Competition</h3>
+          <p>Competed in the Autonomous Vehicle Category. Built a software architecture using a Raspberry Pi 5, Hailo-8 AI Accelerator, and Rust.</p>
+        </div>
+      </div>
+
+      <div class="timeline-item reveal">
+        <div class="timeline-date">2025</div>
+        <div class="timeline-content">
+          <h3>2nd Place — 17th International MEB Robot Competition</h3>
+          <p>Secured 2nd place internationally in the Mini-Sumo category. Focused on low-level sensor fusion and real-time control algorithms.</p>
+        </div>
+      </div>
+      
+      <div class="timeline-item reveal">
+        <div class="timeline-date">2025</div>
+        <div class="timeline-content">
+          <h3>3rd Place — DIY Kütahya</h3>
+          <p>Achieved 3rd place in both the Mini-Sumo and Maze Master robotics categories.</p>
+        </div>
+      </div>
+
+      <div class="timeline-item reveal">
+        <div class="timeline-date">2024</div>
+        <div class="timeline-content">
+          <h3>Presenter — TÜBİTAK 4006 Science Fair</h3>
+          <p>Presented technical demonstrations of multiple personal robotics and system software projects.</p>
+        </div>
       </div>
 
     </div>
@@ -534,227 +582,117 @@
 
   <!-- SKILLS -->
   <section id="skills">
-    <h2 class="section-title reveal"><span>⚙️ Technical</span> Skills</h2>
-    <p class="section-sub reveal">Technologies and platforms I work with</p>
-    <div class="skills-section">
-      <div class="skill-group reveal">
-        <h3>// Programming Languages</h3>
+    <div class="section-header reveal">
+      <h2 class="section-title">Technical Skills</h2>
+    </div>
+
+    <div class="skills-grid reveal">
+      <div class="skill-category">
+        <h4>Languages</h4>
         <div class="skill-tags">
-          <span class="skill-tag">🦀 Rust</span>
-          <span class="skill-tag">🐍 Python</span>
-          <span class="skill-tag">⚡ C++</span>
-          <span class="skill-tag">🎯 C#</span>
-          <span class="skill-tag">☕ JavaScript</span>
-          <span class="skill-tag">🌐 HTML/CSS</span>
-          <span class="skill-tag">🔷 TypeScript</span>
+          <span>Rust</span>
+          <span>Python</span>
+          <span>TypeScript</span>
+          <span>C#</span>
         </div>
       </div>
-      <div class="skill-group reveal">
-        <h3>// Hardware & Platforms</h3>
+
+      <div class="skill-category">
+        <h4>Hardware & AI</h4>
         <div class="skill-tags">
-          <span class="skill-tag">NVIDIA Jetson</span>
-          <span class="skill-tag">Raspberry Pi</span>
-          <span class="skill-tag">Hailo-8</span>
-          <span class="skill-tag">Arduino</span>
-          <span class="skill-tag">ESP32</span>
+          <span>Raspberry Pi 5</span>
+          <span>Hailo-8 AI</span>
+          <span>NVIDIA Jetson</span>
+          <span>YOLOv8</span>
+          <span>PyO3</span>
         </div>
       </div>
-      <div class="skill-group reveal">
-        <h3>// AI / ML</h3>
+
+      <div class="skill-category">
+        <h4>Environment & Tools</h4>
         <div class="skill-tags">
-          <span class="skill-tag">PyTorch</span>
-          <span class="skill-tag">YOLOv8</span>
-          <span class="skill-tag">TensorFlow</span>
-          <span class="skill-tag">OpenCV</span>
-          <span class="skill-tag">ROCm</span>
-          <span class="skill-tag">Vulkan</span>
-        </div>
-      </div>
-      <div class="skill-group reveal">
-        <h3>// Operating Systems</h3>
-        <div class="skill-tags">
-          <span class="skill-tag">Arch Linux</span>
-          <span class="skill-tag">Ubuntu</span>
-          <span class="skill-tag">Debian</span>
-          <span class="skill-tag">Windows</span>
-        </div>
-      </div>
-      <div class="skill-group reveal">
-        <h3>// Networking & Security</h3>
-        <div class="skill-tags">
-          <span class="skill-tag">SSH</span>
-          <span class="skill-tag">Wireshark</span>
-          <span class="skill-tag">Networking</span>
+          <span>Arch Linux</span>
+          <span>CachyOS</span>
+          <span>Tauri</span>
+          <span>Git / GitHub</span>
+          <span>Vulkan / ROCm</span>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- AWARDS -->
-  <section id="awards">
-    <h2 class="section-title reveal"><span>🏆 Honors</span> & Awards</h2>
-    <p class="section-sub reveal">Competitions and presentations</p>
-    <div class="awards-list">
-      <div class="award-item reveal">
-        <div class="award-icon">🥈</div>
-        <div>
-          <h4>2nd Place — 17th International MEB Robot Competition</h4>
-          <p>Mini-Sumo Category</p>
-        </div>
-      </div>
-      <div class="award-item reveal">
-        <div class="award-icon">🥉</div>
-        <div>
-          <h4>3rd Place — DIY Workshop Robotics</h4>
-          <p>Mini-Sumo & Maze</p>
-        </div>
-      </div>
-      <div class="award-item reveal">
-        <div class="award-icon">🎤</div>
-        <div>
-          <h4>Presenter — TÜBİTAK 4006 Science Fair</h4>
-          <p>Multiple robotics project presentations</p>
-        </div>
-      </div>
-      <div class="award-item reveal">
-        <div class="award-icon">⭐</div>
-        <div>
-          <h4>GitHub Starstruck Achievement</h4>
-          <p>Recognized by the community</p>
-        </div>
-      </div>
+  <!-- FOOTER -->
+  <footer id="contact">
+    <div>
+      © 2026 Kuzey Ceylan. All rights reserved.
     </div>
-  </section>
-
-  <!-- CONTACT -->
-  <section class="contact-section" id="contact">
-    <h2 class="section-title reveal"><span>📬 Contact</span></h2>
-    <p class="section-sub reveal">Open for academic collaborations and research opportunities</p>
-    <div class="contact-links reveal">
-      <a href="https://github.com/CSDC-K" target="_blank" class="contact-link">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
-        GitHub
-      </a>
-      <a href="mailto:contact@kuzey.dev" class="contact-link">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 4L12 13 2 4"/></svg>
-        contact@kuzey.dev
-      </a>
+    <div style="display: flex; gap: 1.2rem;">
+      <a href="https://github.com/CSDC-K" target="_blank" rel="noopener">GitHub</a>
+      <a href="mailto:contact@kuzey.dev">Email</a>
     </div>
-  </section>
-
-  <footer>
-    <p>© 2026 Kuzey — Built with ☕ and 🦀</p>
   </footer>
 
-</div>
+</main>
 
 <script>
-// ========== SHOOTING STARS ==========
-const canvas = document.getElementById('stars');
-const ctx = canvas.getContext('2d');
+  // Dynamic Canvas Background (Subtle Dust Particles & Starfield)
+  const canvas = document.getElementById('bg-canvas');
+  const ctx = canvas.getContext('2d');
 
-function resize() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-}
-resize();
-window.addEventListener('resize', resize);
+  function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
 
-// Static stars
-const stars = [];
-for (let i = 0; i < 200; i++) {
-  stars.push({
-    x: Math.random() * canvas.width,
-    y: Math.random() * canvas.height,
-    r: Math.random() * 1.5 + 0.3,
-    alpha: Math.random() * 0.8 + 0.2,
-    twinkleSpeed: Math.random() * 0.02 + 0.005,
-    twinkleDir: 1
-  });
-}
+  const particles = [];
+  const particleCount = Math.min(window.innerWidth / 12, 80);
 
-// Shooting stars
-const shootingStars = [];
-
-function spawnShootingStar() {
-  const x = Math.random() * canvas.width;
-  const y = Math.random() * canvas.height * 0.5;
-  const angle = Math.PI / 4 + Math.random() * 0.3;
-  const speed = 6 + Math.random() * 8;
-  shootingStars.push({
-    x, y, angle, speed,
-    length: 60 + Math.random() * 80,
-    life: 1,
-    decay: 0.012 + Math.random() * 0.01
-  });
-}
-
-function animate() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  // Draw static stars with twinkle
-  for (const s of stars) {
-    s.alpha += s.twinkleSpeed * s.twinkleDir;
-    if (s.alpha >= 1) s.twinkleDir = -1;
-    if (s.alpha <= 0.2) s.twinkleDir = 1;
-
-    ctx.beginPath();
-    ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(255,255,255,${s.alpha})`;
-    ctx.fill();
+  for (let i = 0; i < particleCount; i++) {
+    particles.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      radius: Math.random() * 1.2 + 0.3,
+      alpha: Math.random() * 0.5 + 0.2,
+      vx: (Math.random() - 0.5) * 0.2,
+      vy: (Math.random() - 0.5) * 0.2
+    });
   }
 
-  // Draw & update shooting stars
-  for (let i = shootingStars.length - 1; i >= 0; i--) {
-    const ss = shootingStars[i];
-    const tailX = ss.x - Math.cos(ss.angle) * ss.length;
-    const tailY = ss.y - Math.sin(ss.angle) * ss.length;
+  function render() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    const grad = ctx.createLinearGradient(tailX, tailY, ss.x, ss.y);
-    grad.addColorStop(0, `rgba(255,255,255,0)`);
-    grad.addColorStop(1, `rgba(200,180,255,${ss.life})`);
+    particles.forEach(p => {
+      p.x += p.vx;
+      p.y += p.vy;
 
-    ctx.beginPath();
-    ctx.moveTo(tailX, tailY);
-    ctx.lineTo(ss.x, ss.y);
-    ctx.strokeStyle = grad;
-    ctx.lineWidth = 1.5;
-    ctx.stroke();
+      if (p.x < 0) p.x = canvas.width;
+      if (p.x > canvas.width) p.x = 0;
+      if (p.y < 0) p.y = canvas.height;
+      if (p.y > canvas.height) p.y = 0;
 
-    // Glow head
-    ctx.beginPath();
-    ctx.arc(ss.x, ss.y, 2, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(200,180,255,${ss.life})`;
-    ctx.fill();
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(167, 139, 250, ${p.alpha})`;
+      ctx.fill();
+    });
 
-    ss.x += Math.cos(ss.angle) * ss.speed;
-    ss.y += Math.sin(ss.angle) * ss.speed;
-    ss.life -= ss.decay;
-
-    if (ss.life <= 0 || ss.x > canvas.width + 100 || ss.y > canvas.height + 100) {
-      shootingStars.splice(i, 1);
-    }
+    requestAnimationFrame(render);
   }
+  render();
 
-  // Randomly spawn
-  if (Math.random() < 0.015) spawnShootingStar();
+  // Scroll Reveal Observer
+  const observerOptions = { threshold: 0.1 };
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, observerOptions);
 
-  requestAnimationFrame(animate);
-}
-
-animate();
-
-// ========== SCROLL REVEAL ==========
-const reveals = document.querySelectorAll('.reveal');
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach((e, i) => {
-    if (e.isIntersecting) {
-      setTimeout(() => e.target.classList.add('visible'), i * 80);
-    }
-  });
-}, { threshold: 0.15 });
-
-reveals.forEach(el => observer.observe(el));
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 </script>
 
 </body>
