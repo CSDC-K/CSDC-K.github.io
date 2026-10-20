@@ -4,21 +4,33 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Kuzey Ceylan | CSDC-K</title>
+  <meta name="description" content="Kuzey Ceylan — systems & autonomous software developer building robots, autonomous systems and local AI runtimes in Rust and Python.">
+  <meta property="og:title" content="Kuzey Ceylan | CSDC-K">
+  <meta property="og:description" content="Options aren't handed out. They're built. Robots, autonomous systems and local AI runtimes in Rust and Python.">
+  <meta property="og:image" content="https://github.com/CSDC-K.png">
+  <meta name="theme-color" content="#08080a">
+  <script>document.documentElement.classList.add('js');</script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #07070a;
-      --surface-1: #0f0f15;
-      --surface-2: #161622;
-      --border: rgba(255, 255, 255, 0.07);
-      --border-hover: rgba(139, 92, 246, 0.3);
-      --accent: #7c3aed;
-      --accent-light: #a78bfa;
-      --text-main: #f1f5f9;
-      --text-muted: #94a3b8;
-      --text-dim: #64748b;
+      --bg: #08080a;
+      --surface: #101015;
+      --surface-2: #17171e;
+      --line: rgba(255, 255, 255, 0.08);
+      --line-2: rgba(255, 255, 255, 0.16);
+      --text: #f2f1ec;
+      --muted: #a3a3ad;
+      --dim: #6c6c78;
+      --accent: #c8f542;
+      --accent-soft: rgba(200, 245, 66, 0.12);
+      --accent-ink: #0b0d02;
+      --warn: #ff6b57;
+      --serif: 'Instrument Serif', Georgia, serif;
+      --sans: 'Plus Jakarta Sans', system-ui, sans-serif;
+      --mono: 'JetBrains Mono', ui-monospace, monospace;
+      --maxw: 1120px;
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -26,40 +38,64 @@
     html { scroll-behavior: smooth; }
 
     body {
-      background-color: var(--bg);
-      color: var(--text-main);
-      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      line-height: 1.65;
       overflow-x: hidden;
-      line-height: 1.6;
       -webkit-font-smoothing: antialiased;
     }
 
-    /* BACKGROUND CANVAS */
-    canvas#bg-canvas {
+    /* film grain */
+    body::after {
+      content: '';
       position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      z-index: 0;
+      inset: 0;
       pointer-events: none;
+      z-index: 300;
+      opacity: 0.04;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
     }
 
-    .container {
+    ::selection { background: var(--accent); color: var(--accent-ink); }
+
+    a { color: inherit; }
+
+    .wrap {
       position: relative;
-      z-index: 1;
-      max-width: 1000px;
+      max-width: var(--maxw);
       margin: 0 auto;
       padding: 0 1.5rem;
     }
 
+    .mono { font-family: var(--mono); }
+
     /* NAV */
+    .progress {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: var(--accent);
+      transform-origin: 0 50%;
+      transform: scaleX(0);
+      z-index: 120;
+    }
+
     nav {
       position: fixed;
       top: 0; left: 0; right: 0;
       z-index: 100;
-      background: rgba(7, 7, 10, 0.8);
+      padding: 1.1rem 0;
+      transition: background 0.3s ease, border-color 0.3s ease, padding 0.3s ease;
+      border-bottom: 1px solid transparent;
+    }
+
+    nav.scrolled {
+      background: rgba(8, 8, 10, 0.78);
       backdrop-filter: blur(16px);
-      border-bottom: 1px solid var(--border);
-      padding: 1rem 0;
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom-color: var(--line);
+      padding: 0.8rem 0;
     }
 
     .nav-inner {
@@ -69,630 +105,1686 @@
     }
 
     .logo {
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--mono);
       font-weight: 700;
-      font-size: 1.1rem;
-      color: var(--text-main);
+      font-size: 1rem;
       text-decoration: none;
       letter-spacing: -0.02em;
     }
 
-    .logo span { color: var(--accent-light); }
+    .logo span { color: var(--accent); }
 
-    .nav-links { display: flex; gap: 1.8rem; list-style: none; }
+    .nav-links { display: flex; gap: 1.6rem; list-style: none; }
 
     .nav-links a {
-      color: var(--text-muted);
+      color: var(--muted);
       text-decoration: none;
-      font-size: 0.88rem;
+      font-size: 0.86rem;
       font-weight: 500;
       transition: color 0.2s ease;
     }
 
-    .nav-links a:hover { color: var(--text-main); }
+    .nav-links a:hover { color: var(--text); }
+
+    .menu-btn {
+      display: none;
+      background: none;
+      border: 1px solid var(--line-2);
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      padding: 0.35rem 0.7rem;
+      border-radius: 6px;
+      cursor: pointer;
+    }
 
     /* HERO */
     .hero {
-      min-height: 85vh;
+      position: relative;
+      min-height: 100vh;
+      min-height: 100svh;
       display: flex;
       flex-direction: column;
       justify-content: center;
-      align-items: flex-start;
-      padding-top: 6rem;
+      padding: 7rem 0 5rem;
+      overflow: hidden;
     }
 
-    .avatar-wrapper {
-      position: relative;
-      margin-bottom: 1.8rem;
+    #traces {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      -webkit-mask-image: linear-gradient(90deg, rgba(0,0,0,0.22) 0%, rgba(0,0,0,0.3) 38%, #000 70%);
+              mask-image: linear-gradient(90deg, rgba(0,0,0,0.22) 0%, rgba(0,0,0,0.3) 38%, #000 70%);
+    }
+
+    .hero::after {
+      content: '';
+      position: absolute;
+      left: 0; right: 0; bottom: 0;
+      height: 160px;
+      background: linear-gradient(transparent, var(--bg));
+      pointer-events: none;
+    }
+
+    .hero-inner { z-index: 1; width: 100%; }
+
+    .id-row {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 2.4rem;
     }
 
     .avatar {
-      width: 100px;
-      height: 100px;
+      width: 56px;
+      height: 56px;
       border-radius: 50%;
-      border: 1px solid var(--border);
-      box-shadow: 0 0 30px rgba(124, 58, 237, 0.15);
+      border: 1px solid var(--line-2);
       object-fit: cover;
+      box-shadow: 0 0 0 4px var(--accent-soft);
     }
 
-    .hero-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.35rem 0.8rem;
-      border-radius: 99px;
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid var(--border);
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.8rem;
-      color: var(--accent-light);
-      margin-bottom: 1.2rem;
+    .id-row h1 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      line-height: 1.3;
     }
 
-    .hero h1 {
-      font-size: clamp(2.4rem, 5vw, 3.8rem);
-      font-weight: 800;
-      letter-spacing: -0.03em;
-      line-height: 1.1;
-      margin-bottom: 1rem;
+    .role {
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      color: var(--accent);
     }
 
-    .hero p.bio {
-      font-size: 1.1rem;
-      color: var(--text-muted);
-      max-width: 620px;
+    .statement {
+      font-family: var(--serif);
       font-weight: 400;
-      line-height: 1.7;
-      margin-bottom: 2rem;
+      font-size: clamp(2.6rem, 6.6vw, 5.6rem);
+      line-height: 1.02;
+      letter-spacing: -0.015em;
+      max-width: 15ch;
+      margin-bottom: 1.8rem;
     }
 
-    .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; }
+    .statement em {
+      font-style: italic;
+      color: var(--accent);
+      position: relative;
+      white-space: nowrap;
+    }
+
+    .statement em::after {
+      content: '';
+      position: absolute;
+      left: 0; right: 0; bottom: 0.06em;
+      height: 0.06em;
+      background: var(--accent);
+      transform-origin: 0 50%;
+      transform: scaleX(0);
+      animation: underline 0.9s cubic-bezier(.2,.7,.2,1) 1.1s forwards;
+    }
+
+    .statement .then { color: var(--dim); display: block; font-size: 0.48em; line-height: 1.2; margin-top: 0.6em; }
+
+    @keyframes underline { to { transform: scaleX(1); } }
+
+    .hero .bio {
+      font-size: 1.08rem;
+      color: var(--muted);
+      max-width: 560px;
+      margin-bottom: 2.2rem;
+    }
+
+    .actions { display: flex; gap: 0.75rem; flex-wrap: wrap; }
 
     .btn {
       display: inline-flex;
       align-items: center;
       gap: 0.5rem;
-      padding: 0.7rem 1.4rem;
-      border-radius: 8px;
+      padding: 0.75rem 1.3rem;
+      border-radius: 999px;
       font-size: 0.9rem;
       font-weight: 600;
       text-decoration: none;
-      transition: all 0.2s ease;
+      transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+    }
+
+    .btn-primary { background: var(--accent); color: var(--accent-ink); }
+    .btn-primary:hover { transform: translateY(-2px); background: #d6ff5c; }
+
+    .btn-ghost {
+      border: 1px solid var(--line-2);
+      background: rgba(8, 8, 10, 0.5);
+      backdrop-filter: blur(6px);
+    }
+    .btn-ghost:hover { border-color: var(--accent); transform: translateY(-2px); }
+
+    .stats {
+      list-style: none;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0;
+      margin-top: 3.5rem;
+      border-top: 1px solid var(--line);
+      max-width: 820px;
+    }
+
+    .stats li {
+      flex: 1 1 220px;
+      padding: 1.1rem 1.5rem 0 0;
+    }
+
+    .stats a { text-decoration: none; display: block; }
+    .stats a:hover b { color: #fff; }
+
+    .stats b {
+      display: block;
+      font-family: var(--serif);
+      font-weight: 400;
+      font-size: 2.4rem;
+      line-height: 1;
+      color: var(--accent);
+      margin-bottom: 0.4rem;
+      transition: color 0.2s ease;
+    }
+
+    .stats span {
+      font-size: 0.8rem;
+      color: var(--muted);
+      line-height: 1.45;
+      display: block;
+    }
+
+    .hero-foot {
+      position: absolute;
+      left: 0; right: 0; bottom: 1.6rem;
+      z-index: 2;
+      display: flex;
+      justify-content: space-between;
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      color: var(--dim);
+    }
+
+    .hero-foot .scroll-hint::before {
+      content: '';
+      display: inline-block;
+      width: 28px;
+      height: 1px;
+      background: var(--dim);
+      vertical-align: middle;
+      margin-right: 0.6rem;
+    }
+
+    #opt-count b { color: var(--accent); font-weight: 500; }
+
+    /* hero intro animation */
+    .js .intro { opacity: 0; transform: translateY(16px); animation: intro 0.8s cubic-bezier(.2,.7,.2,1) forwards; }
+    .js .intro:nth-child(2) { animation-delay: 0.15s; }
+    .js .intro:nth-child(3) { animation-delay: 0.3s; }
+    .js .intro:nth-child(4) { animation-delay: 0.45s; }
+    .js .intro:nth-child(5) { animation-delay: 0.6s; }
+    @keyframes intro { to { opacity: 1; transform: none; } }
+
+    /* SECTIONS */
+    section { padding: 7rem 0; position: relative; }
+
+    .eyebrow {
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      color: var(--accent);
+      margin-bottom: 0.9rem;
+      letter-spacing: 0.02em;
+    }
+
+    .section-title {
+      font-family: var(--serif);
+      font-weight: 400;
+      font-size: clamp(2.3rem, 5vw, 3.6rem);
+      line-height: 1.05;
+      letter-spacing: -0.01em;
+      margin-bottom: 1rem;
+    }
+
+    .section-title em { font-style: italic; color: var(--accent); }
+
+    .section-lede {
+      color: var(--muted);
+      max-width: 560px;
+      font-size: 1.02rem;
+    }
+
+    .section-head { margin-bottom: 3.5rem; }
+
+    /* STORY */
+    .story { position: relative; margin-top: 1rem; }
+
+    .rail {
+      position: absolute;
+      left: 7px;
+      top: 0.6rem;
+      bottom: 0;
+      width: 2px;
+      background: var(--line);
+    }
+
+    .rail-fill {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(var(--accent), rgba(200, 245, 66, 0.6));
+      box-shadow: 0 0 14px rgba(200, 245, 66, 0.45);
+      transform-origin: 50% 0;
+      transform: scaleY(0);
+    }
+
+    .chapter {
+      position: relative;
+      padding-left: 3.2rem;
+      padding-bottom: 6.5rem;
+      display: grid;
+      grid-template-columns: 190px minmax(0, 1fr);
+      gap: 2.5rem;
+    }
+
+    .chapter:last-child { padding-bottom: 0; }
+
+    .node {
+      position: absolute;
+      left: 0;
+      top: 0.45rem;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: 2px solid var(--line-2);
+      background: var(--bg);
+      transition: all 0.4s ease;
+    }
+
+    .chapter.on .node {
+      border-color: var(--accent);
+      background: var(--accent);
+      box-shadow: 0 0 0 6px var(--accent-soft), 0 0 18px rgba(200, 245, 66, 0.5);
+    }
+
+    .ch-meta {
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      color: var(--dim);
+    }
+
+    .ch-meta .num {
+      display: block;
+      font-size: 2.4rem;
+      font-weight: 700;
+      line-height: 1;
+      color: var(--line-2);
+      margin-bottom: 0.6rem;
+      transition: color 0.4s ease;
+    }
+
+    .chapter.on .ch-meta .num { color: var(--text); }
+
+    .ch-meta .when { display: block; color: var(--muted); }
+
+    .branch-tag {
+      display: inline-block;
+      margin-top: 0.7rem;
+      padding: 0.15rem 0.55rem;
+      border: 1px solid var(--line-2);
+      border-radius: 999px;
+      font-size: 0.72rem;
+      color: var(--muted);
+    }
+
+    .branch-tag::before { content: '⎇ '; color: var(--accent); }
+
+    .ch-body { max-width: 640px; }
+
+    .ch-body h3 {
+      font-family: var(--serif);
+      font-weight: 400;
+      font-size: clamp(1.9rem, 3.6vw, 2.7rem);
+      line-height: 1.08;
+      margin-bottom: 1.3rem;
+    }
+
+    .ch-body p {
+      color: var(--muted);
+      font-size: 1.02rem;
+      margin-bottom: 1rem;
+    }
+
+    .ch-body p strong { color: var(--text); font-weight: 600; }
+
+    .pull {
+      font-family: var(--serif);
+      font-size: clamp(1.6rem, 3vw, 2.2rem);
+      line-height: 1.2;
+      color: var(--text);
+      border-left: 2px solid var(--accent);
+      padding: 0.3rem 0 0.3rem 1.3rem;
+      margin: 1.8rem 0 0.5rem;
+    }
+
+    .pull em { font-style: italic; color: var(--accent); }
+
+    .ch-body .quote {
+      font-family: var(--serif);
+      font-style: italic;
+      font-size: clamp(1.45rem, 2.6vw, 1.85rem);
+      line-height: 1.3;
+      color: var(--text);
+      margin: 0 0 0.5rem;
+    }
+
+    .ch-body .quote-by {
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      color: var(--dim);
+      margin-bottom: 1.6rem !important;
+    }
+
+    .note {
+      display: flex;
+      gap: 0.8rem;
+      align-items: flex-start;
+      margin-top: 1.4rem;
+      padding: 1rem 1.1rem;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--surface);
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .note .k {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      color: var(--accent);
+      white-space: nowrap;
+      padding-top: 0.15rem;
+    }
+
+    .mini-awards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 0.9rem;
+      margin-top: 1.6rem;
+    }
+
+    .mini-award {
+      border: 1px solid var(--line);
+      background: var(--surface);
+      border-radius: 14px;
+      padding: 1.2rem 1.25rem;
+    }
+
+    .mini-award .place {
+      font-family: var(--serif);
+      font-size: 2.6rem;
+      line-height: 1;
+      color: var(--accent);
+    }
+
+    .mini-award h4 { font-size: 0.95rem; font-weight: 600; margin: 0.6rem 0 0.3rem; }
+    .mini-award p { font-size: 0.84rem; margin: 0; }
+
+    /* the fork */
+    .fork {
+      margin: 2rem 0 1.5rem;
+      max-width: 620px;
+    }
+
+    .fork svg { width: 100%; height: auto; display: block; overflow: visible; }
+
+    .fork .draw {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+      transition: stroke-dashoffset 1.4s cubic-bezier(.4,.1,.2,1) 0.5s;
+    }
+
+    .fork .late { opacity: 0; transition: opacity 0.6s ease 1.6s; }
+    .fork .dead { opacity: 0; transition: opacity 0.8s ease 0.3s; }
+
+    .fork.visible .draw { stroke-dashoffset: 0; }
+    .fork.visible .late, .fork.visible .dead { opacity: 1; }
+
+    .ch-body .willingly {
+      font-family: var(--serif);
+      font-size: clamp(2.2rem, 5vw, 3.6rem);
+      line-height: 1.05;
+      color: var(--text);
+      margin-top: 1.5rem;
+    }
+
+    .ch-body .willingly em { font-style: italic; color: var(--accent); }
+
+    /* build log */
+    .log {
+      margin: 1.8rem 0;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #0b0b0e;
+      overflow: hidden;
+      font-family: var(--mono);
+      font-size: 0.8rem;
+    }
+
+    .log-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.65rem 0.9rem;
+      border-bottom: 1px solid var(--line);
+      color: var(--dim);
+      font-size: 0.72rem;
+    }
+
+    .log-bar i {
+      width: 9px; height: 9px; border-radius: 50%;
+      background: var(--line-2);
+      display: inline-block;
+    }
+
+    .log-bar span { margin-left: 0.5rem; }
+
+    .log-body { padding: 1rem 1.1rem 1.1rem; overflow-x: auto; }
+
+    .log .ln {
+      display: block;
+      white-space: pre;
+      color: var(--muted);
+      line-height: 1.9;
+    }
+
+    .js .log .ln { opacity: 0; transform: translateX(-6px); transition: opacity 0.35s ease, transform 0.35s ease; transition-delay: calc(var(--i) * 0.38s + 0.2s); }
+    .js .log.visible .ln { opacity: 1; transform: none; }
+
+    .log .err { color: var(--warn); }
+    .log .ok { color: var(--accent); }
+    .log .wip { color: var(--dim); }
+    .log .cmd { color: var(--text); }
+
+    .spec {
+      margin-top: 1.4rem;
+      padding: 1.3rem;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: var(--surface);
+    }
+
+    .spec h4 {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      font-weight: 500;
+      color: var(--dim);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 0.6rem;
+    }
+
+    .spec p { font-size: 0.9rem; margin-bottom: 0.9rem; }
+
+    .chips { display: flex; flex-wrap: wrap; gap: 0.45rem; }
+
+    .chips span {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      padding: 0.25rem 0.6rem;
+      border-radius: 6px;
+      background: var(--surface-2);
+      border: 1px solid var(--line);
+      color: var(--muted);
+    }
+
+    /* branch tree */
+    .tree { list-style: none; margin: 1.6rem 0 0 0.3rem; }
+
+    .tree li { position: relative; padding: 0.4rem 0 0.4rem 2.1rem; }
+
+    .tree li::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0;
+      width: 1.5rem;
+      height: 50%;
+      border-left: 2px solid var(--accent);
+      border-bottom: 2px solid var(--accent);
+      border-bottom-left-radius: 12px;
+      opacity: 0.85;
+    }
+
+    .tree li:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      left: 0; top: 50%; bottom: 0;
+      border-left: 2px solid var(--accent);
+      opacity: 0.85;
+    }
+
+    .tree a {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 0.7rem;
+      flex-wrap: wrap;
+      text-decoration: none;
+      padding: 0.45rem 0.8rem;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--surface);
+      transition: border-color 0.2s ease, transform 0.2s ease;
+    }
+
+    .tree a:hover { border-color: var(--accent); transform: translateX(4px); }
+
+    .tree .b-name { font-family: var(--mono); font-size: 0.82rem; color: var(--text); }
+    .tree .b-desc { font-size: 0.82rem; color: var(--dim); }
+    .tree .gold .b-name { color: var(--accent); }
+
+    /* SINGAPORE */
+    .sg {
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      background:
+        radial-gradient(900px 400px at 85% 0%, rgba(200, 245, 66, 0.08), transparent 60%),
+        var(--bg);
+    }
+
+    .sg-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.4fr);
+      gap: 3.5rem;
+      align-items: center;
+    }
+
+    .sg-grid:has(.gallery[data-count="0"]) { grid-template-columns: minmax(0, 1fr); }
+
+    .sg-place {
+      font-family: var(--serif);
+      font-size: clamp(6rem, 14vw, 11rem);
+      line-height: 0.85;
+      color: transparent;
+      -webkit-text-stroke: 1.5px var(--accent);
+      letter-spacing: -0.03em;
+      margin-bottom: 1rem;
+    }
+
+    .sg-place sup { font-size: 0.4em; vertical-align: top; position: relative; top: 0.15em; }
+
+    .sg-coords {
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      color: var(--dim);
+      margin-bottom: 1.4rem;
+    }
+
+    .sg h2 {
+      font-family: var(--serif);
+      font-weight: 400;
+      font-size: clamp(2rem, 4vw, 2.9rem);
+      line-height: 1.05;
+      margin-bottom: 1rem;
+    }
+
+    .sg p { color: var(--muted); margin-bottom: 1rem; }
+
+    .sg .bridge {
+      font-family: var(--serif);
+      font-style: italic;
+      font-size: 1.35rem;
+      color: var(--text);
+      margin-top: 1.4rem;
+    }
+
+    .gallery { display: grid; gap: 12px; }
+    .gallery[data-count="3"] { grid-template-columns: 1.5fr 1fr; grid-template-rows: 1fr 1fr; aspect-ratio: 16 / 11; }
+    .gallery[data-count="3"] .ph:first-child { grid-row: 1 / span 2; }
+    .gallery[data-count="2"] { grid-template-columns: 1fr 1fr; }
+    .gallery[data-count="2"] .ph { aspect-ratio: 3 / 4; }
+    .gallery[data-count="1"] .ph { aspect-ratio: 4 / 3; }
+    .gallery[data-count="0"] { display: none; }
+
+    .ph {
+      position: relative;
+      overflow: hidden;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: var(--surface);
+      cursor: zoom-in;
+    }
+
+    .ph img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.6s cubic-bezier(.2,.7,.2,1), filter 0.4s ease;
+      filter: saturate(0.9);
+    }
+
+    .ph:hover img { transform: scale(1.04); filter: saturate(1.05); }
+
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      z-index: 400;
+      background: rgba(5, 5, 7, 0.92);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      cursor: zoom-out;
+    }
+
+    .lightbox[hidden] { display: none; }
+
+    .lightbox img { max-width: 100%; max-height: 100%; border-radius: 10px; }
+
+    .lightbox button {
+      position: absolute;
+      top: 1rem; right: 1rem;
+      background: var(--surface-2);
+      color: var(--text);
+      border: 1px solid var(--line-2);
+      border-radius: 999px;
+      width: 40px; height: 40px;
+      font-size: 1.2rem;
       cursor: pointer;
     }
 
-    .btn-primary {
-      background: var(--text-main);
-      color: var(--bg);
-    }
-
-    .btn-primary:hover {
-      background: #ffffff;
-      transform: translateY(-2px);
-    }
-
-    .btn-secondary {
-      background: var(--surface-1);
-      color: var(--text-main);
-      border: 1px solid var(--border);
-    }
-
-    .btn-secondary:hover {
-      border-color: var(--border-hover);
-      transform: translateY(-2px);
-    }
-
-    /* SECTIONS */
-    section { padding: 5rem 0; }
-
-    .section-header { margin-bottom: 2.5rem; }
-
-    .section-title {
-      font-size: 1.6rem;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      display: flex;
-      align-items: center;
-      gap: 0.6rem;
-    }
-
-    .section-title::before {
-      content: '';
-      display: inline-block;
-      width: 4px;
-      height: 1.2rem;
-      background: var(--accent);
-      border-radius: 2px;
-    }
-
-    /* GRID & CARDS */
+    /* WORK */
     .grid-2 {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
-      gap: 1.25rem;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr));
+      gap: 1rem;
     }
 
     .grid-3 {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 1.25rem;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
     }
 
     .card {
-      background: var(--surface-1);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 1.5rem;
-      transition: all 0.25s ease;
+      --mx: 50%;
+      --my: 50%;
       position: relative;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 1.6rem;
+      transition: border-color 0.25s ease, transform 0.25s ease;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
     }
 
-    .card:hover {
-      border-color: var(--border-hover);
-      transform: translateY(-3px);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    .card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(420px circle at var(--mx) var(--my), rgba(200, 245, 66, 0.09), transparent 45%);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
     }
+
+    .card:hover { border-color: rgba(200, 245, 66, 0.35); transform: translateY(-3px); }
+    .card:hover::before { opacity: 1; }
 
     .card-header {
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
+      gap: 1rem;
       margin-bottom: 0.8rem;
     }
 
-    .card-title {
-      font-size: 1.15rem;
-      font-weight: 600;
-      color: var(--text-main);
+    .card-title { font-size: 1.15rem; font-weight: 700; letter-spacing: -0.01em; }
+    .card-title a { text-decoration: none; }
+    .card-title a:hover { color: var(--accent); }
+    .card-title .arrow { color: var(--dim); font-weight: 400; font-size: 0.9em; }
+
+    .tag {
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      padding: 0.2rem 0.5rem;
+      border-radius: 6px;
+      background: var(--surface-2);
+      color: var(--muted);
+      border: 1px solid var(--line);
+      white-space: nowrap;
     }
 
-    .card-title a {
-      color: inherit;
+    .card p { color: var(--muted); font-size: 0.9rem; line-height: 1.6; }
+
+    .card .chips { margin-top: auto; padding-top: 1.1rem; }
+
+    .card .story-link {
+      margin-top: 0.9rem;
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      color: var(--accent);
       text-decoration: none;
     }
 
-    .card-title a:hover { color: var(--accent-light); }
+    .card .story-link:hover { text-decoration: underline; }
 
-    .tag {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.72rem;
-      padding: 0.2rem 0.5rem;
-      border-radius: 4px;
-      background: var(--surface-2);
-      color: var(--text-muted);
-      border: 1px solid var(--border);
+    /* RECORD */
+    .record { list-style: none; border-top: 1px solid var(--line); }
+
+    .record li {
+      display: grid;
+      grid-template-columns: 90px minmax(0, 1fr) auto;
+      gap: 1.5rem;
+      align-items: baseline;
+      padding: 1.4rem 0;
+      border-bottom: 1px solid var(--line);
+      transition: background 0.2s ease;
     }
 
-    .card p {
-      color: var(--text-muted);
-      font-size: 0.88rem;
-      line-height: 1.6;
+    .record li:hover { background: linear-gradient(90deg, transparent, rgba(255,255,255,0.02), transparent); }
+
+    .record .yr { font-family: var(--mono); font-size: 0.8rem; color: var(--accent); }
+    .record h3 { font-size: 1.02rem; font-weight: 600; margin-bottom: 0.2rem; }
+    .record p { font-size: 0.88rem; color: var(--muted); }
+
+    .record .rank {
+      font-family: var(--serif);
+      font-size: 1.9rem;
+      line-height: 1;
+      color: var(--accent);
+      min-width: 3.2rem;
+      text-align: right;
     }
 
-    .tech-stack-mini {
-      display: flex;
-      gap: 0.4rem;
-      flex-wrap: wrap;
-      margin-top: 1rem;
-    }
+    .record .rank.none { color: var(--dim); font-family: var(--mono); font-size: 0.72rem; }
 
-    .tech-pill {
-      font-size: 0.75rem;
-      color: var(--text-dim);
-      font-family: 'JetBrains Mono', monospace;
-    }
-
-    /* TIMELINE / EXPERIENCE */
-    .timeline {
-      display: flex;
-      flex-direction: column;
-      gap: 1.2rem;
-    }
-
-    .timeline-item {
-      display: flex;
-      gap: 1.2rem;
-      padding: 1.25rem;
-      background: var(--surface-1);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      transition: border-color 0.2s ease;
-    }
-
-    .timeline-item:hover { border-color: var(--border-hover); }
-
-    .timeline-date {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.8rem;
-      color: var(--accent-light);
-      white-space: nowrap;
-      min-width: 100px;
-    }
-
-    .timeline-content h3 {
-      font-size: 1rem;
-      font-weight: 600;
-      margin-bottom: 0.2rem;
-    }
-
-    .timeline-content p {
-      font-size: 0.88rem;
-      color: var(--text-muted);
-    }
-
-    /* SKILLS LIST */
+    /* SKILLS */
     .skills-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
       gap: 1rem;
     }
 
+    .skill-category {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 1.4rem;
+      background: var(--surface);
+    }
+
     .skill-category h4 {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.8rem;
-      color: var(--text-dim);
+      font-family: var(--mono);
+      font-size: 0.74rem;
+      font-weight: 500;
+      color: var(--dim);
       text-transform: uppercase;
-      margin-bottom: 0.8rem;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.08em;
+      margin-bottom: 1rem;
     }
 
     .skill-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; }
 
     .skill-tags span {
-      font-size: 0.82rem;
-      padding: 0.35rem 0.7rem;
-      background: var(--surface-1);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      color: var(--text-muted);
+      font-size: 0.84rem;
+      padding: 0.35rem 0.75rem;
+      background: var(--surface-2);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--text);
     }
 
-    /* FOOTER */
-    footer {
-      border-top: 1px solid var(--border);
-      padding: 2.5rem 0;
-      color: var(--text-dim);
-      font-size: 0.85rem;
+    /* CONTACT */
+    .contact {
+      padding: 8rem 0 2.5rem;
+      border-top: 1px solid var(--line);
+      background: radial-gradient(800px 400px at 15% 100%, rgba(200, 245, 66, 0.07), transparent 60%);
+    }
+
+    .cta {
+      font-family: var(--serif);
+      font-weight: 400;
+      font-size: clamp(2.6rem, 7vw, 5.4rem);
+      line-height: 1;
+      letter-spacing: -0.015em;
+      margin-bottom: 2.2rem;
+    }
+
+    .cta em { font-style: italic; color: var(--accent); }
+
+    .mail {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: clamp(1rem, 2.4vw, 1.35rem);
+      text-decoration: none;
+      border-bottom: 1px solid var(--accent);
+      padding-bottom: 0.2rem;
+      transition: color 0.2s ease;
+    }
+
+    .mail:hover { color: var(--accent); }
+
+    .foot {
+      margin-top: 6rem;
+      padding-top: 1.6rem;
+      border-top: 1px solid var(--line);
       display: flex;
       justify-content: space-between;
-      align-items: center;
       flex-wrap: wrap;
       gap: 1rem;
+      color: var(--dim);
+      font-size: 0.84rem;
     }
 
-    footer a { color: var(--text-muted); text-decoration: none; }
-    footer a:hover { color: var(--text-main); }
+    .foot nav-links, .foot .links { display: flex; gap: 1.2rem; }
+    .foot a { color: var(--muted); text-decoration: none; }
+    .foot a:hover { color: var(--text); }
 
-    @media (max-width: 640px) {
-      .nav-links { display: none; }
-      .hero { min-height: 70vh; }
-      .timeline-item { flex-direction: column; gap: 0.4rem; }
-      .timeline-date { min-width: auto; }
-    }
-
-    /* REVEAL ANIMATION */
-    .reveal {
+    /* REVEAL */
+    .js .reveal {
       opacity: 0;
-      transform: translateY(20px);
-      transition: opacity 0.6s ease, transform 0.6s ease;
+      transform: translateY(22px);
+      transition: opacity 0.7s ease, transform 0.7s cubic-bezier(.2,.7,.2,1);
     }
 
-    .reveal.visible {
-      opacity: 1;
-      transform: translateY(0);
+    .js .reveal.visible { opacity: 1; transform: none; }
+
+    /* RESPONSIVE */
+    @media (max-width: 900px) {
+      .chapter { grid-template-columns: minmax(0, 1fr); gap: 1rem; padding-left: 2.6rem; padding-bottom: 5rem; }
+      .ch-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem 0.9rem; }
+      .ch-meta .num { font-size: 1rem; margin: 0; }
+      .branch-tag { margin-top: 0; }
+      .sg-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+    }
+
+    @media (max-width: 760px) {
+      .menu-btn { display: inline-block; }
+      .nav-links {
+        display: none;
+        position: absolute;
+        top: calc(100% + 0.5rem);
+        right: 1.5rem;
+        flex-direction: column;
+        gap: 0.9rem;
+        padding: 1.1rem 1.4rem;
+        background: rgba(16, 16, 21, 0.97);
+        border: 1px solid var(--line-2);
+        border-radius: 12px;
+      }
+      .nav-links.open { display: flex; }
+      #traces {
+        opacity: 0.55;
+        -webkit-mask-image: linear-gradient(180deg, rgba(0,0,0,0.35), #000 70%);
+                mask-image: linear-gradient(180deg, rgba(0,0,0,0.35), #000 70%);
+      }
+      .log .ln { white-space: normal; padding-left: 7ch; text-indent: -7ch; line-height: 1.6; margin-bottom: 0.35rem; }
+      .fork text { font-size: 28px; }
+      .fork text.sm { font-size: 24px; }
+      .stats li { flex-basis: 100%; display: flex; align-items: center; gap: 1rem; padding-right: 0; }
+      .stats b { margin: 0; min-width: 4.2rem; font-size: 2rem; }
+      .hero { padding-bottom: 5.5rem; }
+      section { padding: 5rem 0; }
+      .record li { grid-template-columns: minmax(0, 1fr) auto; gap: 0.3rem 1rem; }
+      .record .yr { grid-column: 1 / -1; }
+      .gallery[data-count="3"] { aspect-ratio: auto; grid-template-columns: 1fr 1fr; grid-template-rows: auto; }
+      .gallery[data-count="3"] .ph:first-child { grid-row: auto; grid-column: 1 / -1; aspect-ratio: 4 / 3; }
+      .gallery[data-count="3"] .ph:not(:first-child) { aspect-ratio: 1; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+      .js .intro, .js .reveal, .js .log .ln { opacity: 1; transform: none; }
+      .statement em::after { transform: scaleX(1); }
+      .fork .draw { stroke-dashoffset: 0; }
+      .fork .late, .fork .dead { opacity: 1; }
     }
   </style>
 </head>
 <body>
 
-<canvas id="bg-canvas"></canvas>
+<div class="progress" id="progress"></div>
 
-<nav>
-  <div class="container nav-inner">
-    <a href="#" class="logo">&lt;<span>CSDC-K</span> /&gt;</a>
-    <ul class="nav-links">
-      <li><a href="#projects">Projects</a></li>
-      <li><a href="#experience">Experience & Awards</a></li>
+<nav id="nav">
+  <div class="wrap nav-inner">
+    <a href="#top" class="logo">&lt;<span>CSDC-K</span> /&gt;</a>
+    <button class="menu-btn" id="menu-btn" aria-expanded="false" aria-controls="nav-links">menu</button>
+    <ul class="nav-links" id="nav-links">
+      <li><a href="#story">Story</a></li>
+      <li><a href="#singapore">Singapore</a></li>
+      <li><a href="#work">Work</a></li>
+      <li><a href="#experience">Experience &amp; Awards</a></li>
       <li><a href="#skills">Skills</a></li>
       <li><a href="#contact">Contact</a></li>
     </ul>
   </div>
 </nav>
 
-<main class="container">
-
-  <!-- HERO -->
-  <section class="hero">
-    <div class="avatar-wrapper">
-      <img class="avatar" src="https://github.com/CSDC-K.png" alt="Kuzey Ceylan Profile Picture">
+<!-- HERO -->
+<header class="hero" id="top">
+  <canvas id="traces" aria-hidden="true"></canvas>
+  <div class="wrap hero-inner">
+    <div class="id-row intro">
+      <img class="avatar" src="https://github.com/CSDC-K.png" alt="Kuzey Ceylan profile picture">
+      <div>
+        <h1>Kuzey Ceylan</h1>
+        <p class="role">Systems &amp; Autonomous Software Developer</p>
+      </div>
     </div>
-    <div class="hero-badge">Systems & Autonomous Software Developer</div>
-    <h1>Kuzey Ceylan</h1>
-    <p class="bio">
+
+    <p class="statement intro">
+      Options aren't handed out. They're <em>built.</em>
+      <span class="then">I've been building mine since I was eleven.</span>
+    </p>
+
+    <p class="bio intro">
       I develop low-level system architectures, autonomous robotic control systems, and local AI runtimes, focusing primarily on Rust and Python.
     </p>
-    <div class="hero-actions">
-      <a href="https://github.com/CSDC-K" target="_blank" rel="noopener" class="btn btn-primary">
-        GitHub
-      </a>
-      <a href="mailto:contact@kuzey.dev" class="btn btn-secondary">
-        Email Me
-      </a>
+
+    <div class="actions intro">
+      <a href="#story" class="btn btn-primary">Read the story ↓</a>
+      <a href="https://github.com/CSDC-K" target="_blank" rel="noopener" class="btn btn-ghost">GitHub ↗</a>
+      <a href="mailto:contact@kuzey.dev" class="btn btn-ghost">Email Me</a>
+    </div>
+
+    <ul class="stats intro">
+      <li><a href="#singapore"><b>1st</b><span>Hack Club Horizons Arcana<br>Singapore · 2026</span></a></li>
+      <li><a href="#experience"><b>2nd</b><span>17th International MEB Robot Competition<br>Mini-Sumo · 2025</span></a></li>
+      <li><a href="#experience"><b>3rd ×2</b><span>DIY Kütahya<br>Mini-Sumo &amp; Maze Master · 2025</span></a></li>
+    </ul>
+  </div>
+
+  <div class="wrap hero-foot" aria-hidden="true">
+    <span class="scroll-hint">scroll — it starts in 2020</span>
+    <span id="opt-count">options: <b>1</b></span>
+  </div>
+</header>
+
+<main>
+
+  <!-- STORY -->
+  <section id="story">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <p class="eyebrow">// 01 — the story</p>
+        <h2 class="section-title">Building <em>options.</em></h2>
+        <p class="section-lede">The short version of how I got here, one commit at a time.</p>
+      </div>
+
+      <div class="story">
+        <div class="rail" aria-hidden="true"><div class="rail-fill" id="rail-fill"></div></div>
+
+        <!-- 00 -->
+        <article class="chapter" id="ch-00">
+          <span class="node" aria-hidden="true"></span>
+          <div class="ch-meta reveal">
+            <span class="num">00</span>
+            <span class="when">2020 · age 11</span>
+            <span class="branch-tag">main</span>
+          </div>
+          <div class="ch-body reveal">
+            <h3>Behind the counter.</h3>
+            <p>In 2020 the pandemic hit our family's gift shop hard. With my mom taking a job elsewhere and my dad running the store alone, my afternoons moved from home to the shop — every single day after school.</p>
+            <p>I helped because my family needed it, and I'd do it again. But it also showed me something uncomfortable: even if I had wanted to say no, there was <strong>nothing else I could have said yes to.</strong></p>
+            <blockquote class="pull">So I started building <em>alternatives.</em></blockquote>
+          </div>
+        </article>
+
+        <!-- 01 -->
+        <article class="chapter" id="ch-01">
+          <span class="node" aria-hidden="true"></span>
+          <div class="ch-meta reveal">
+            <span class="num">01</span>
+            <span class="when">10th grade</span>
+            <span class="branch-tag">r&amp;d-team</span>
+          </div>
+          <div class="ch-body reveal">
+            <h3>More curious than confident.</h3>
+            <p>In 10th grade I signed up for my school's R&amp;D team. I wanted to build things far more than I wanted anyone watching me do it — and that's where my first real project came from.</p>
+          </div>
+        </article>
+
+        <!-- 02 -->
+        <article class="chapter" id="ch-02">
+          <span class="node" aria-hidden="true"></span>
+          <div class="ch-meta reveal">
+            <span class="num">02</span>
+            <span class="when">2024 · TÜBİTAK 4006</span>
+            <span class="branch-tag">first-presentation</span>
+          </div>
+          <div class="ch-body reveal">
+            <h3>Taking the mic.</h3>
+            <p>The TÜBİTAK 4006 Science Fair was the first time my work had a real audience: visitors from all over the city. For a while, I stood back and let my teammate do the talking.</p>
+            <p>Then I thought about the kid behind the shop counter and stepped in. When the district's director of national education came by, I invited him over and gave him the demo myself, without a script.</p>
+            <blockquote class="pull">The shy kid gave the <em>demo.</em></blockquote>
+            <div class="note"><span class="k">at the fair</span><span>Presented technical demonstrations of multiple personal robotics and system software projects.</span></div>
+          </div>
+        </article>
+
+        <!-- 03 -->
+        <article class="chapter" id="ch-03">
+          <span class="node" aria-hidden="true"></span>
+          <div class="ch-meta reveal">
+            <span class="num">03</span>
+            <span class="when">2025</span>
+            <span class="branch-tag">robotics-team</span>
+          </div>
+          <div class="ch-body reveal">
+            <h3>One fair, then a team, then podiums.</h3>
+            <p>Confidence turned out to compound. I put together a robotics team of my own, and we started entering competitions — and placing.</p>
+            <div class="mini-awards">
+              <div class="mini-award">
+                <div class="place">2nd</div>
+                <h4>17th International MEB Robot Competition</h4>
+                <p>Mini-Sumo category. Focused on low-level sensor fusion and real-time control algorithms.</p>
+              </div>
+              <div class="mini-award">
+                <div class="place">3rd</div>
+                <h4>DIY Kütahya</h4>
+                <p>3rd place in both the Mini-Sumo and Maze Master categories.</p>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- 04 -->
+        <article class="chapter" id="ch-04">
+          <span class="node" aria-hidden="true"></span>
+          <div class="ch-meta reveal">
+            <span class="num">04</span>
+            <span class="when">the offer</span>
+            <span class="branch-tag">2 options</span>
+          </div>
+          <div class="ch-body reveal">
+            <h3>Solo, by choice.</h3>
+            <p>Then my teacher brought me a new challenge: another international robotics competition — except this time, I'd have to build the robot entirely on my own.</p>
+            <p>Turning it down would have been easy, and nobody would have blamed me. For once, saying no was a real choice. I took the harder path anyway, because resting on what I'd already won felt like the surest way to stop growing.</p>
+
+            <figure class="fork reveal" aria-label="A branch diagram: the main line continues as autonomous-car, while the stay-home branch is abandoned.">
+              <svg viewBox="0 0 620 230" xmlns="http://www.w3.org/2000/svg" font-family="JetBrains Mono, monospace">
+                <path d="M6 70 H160" stroke="#6c6c78" stroke-width="3" fill="none"/>
+                <path class="dead" d="M160 70 C 215 70, 215 165, 275 165 H 450" stroke="#6c6c78" stroke-width="3" stroke-dasharray="9 9" fill="none"/>
+                <g class="dead" stroke="#ff6b57" stroke-width="3.5" stroke-linecap="round">
+                  <path d="M470 151 L494 179"/><path d="M494 151 L470 179"/>
+                </g>
+                <text class="dead" x="275" y="210" fill="#6c6c78" font-size="21" text-decoration="line-through">stay-home</text>
+                <path class="draw" pathLength="1" d="M160 70 H 590" stroke="#c8f542" stroke-width="3.5" fill="none"/>
+                <circle cx="160" cy="70" r="9" fill="#08080a" stroke="#f2f1ec" stroke-width="3"/>
+                <text class="sm" x="160" y="32" fill="#a3a3ad" font-size="18" text-anchor="middle">the offer</text>
+                <g class="late">
+                  <circle cx="590" cy="70" r="10" fill="#c8f542"/>
+                  <circle cx="590" cy="70" r="20" fill="none" stroke="#c8f542" stroke-opacity="0.3" stroke-width="2"/>
+                  <text x="590" y="32" fill="#c8f542" font-size="21" text-anchor="end">autonomous-car</text>
+                  <text class="sm" x="590" y="118" fill="#a3a3ad" font-size="17" text-anchor="end">by choice</text>
+                </g>
+              </svg>
+            </figure>
+
+            <p class="willingly">Same yes as at eleven.<br><em>Different reason.</em></p>
+          </div>
+        </article>
+
+        <!-- 05 -->
+        <article class="chapter" id="ch-05">
+          <span class="node" aria-hidden="true"></span>
+          <div class="ch-meta reveal">
+            <span class="num">05</span>
+            <span class="when">2026 · 18th International MEB Robot Competition</span>
+            <span class="branch-tag">autonomous-car</span>
+          </div>
+          <div class="ch-body reveal">
+            <h3>The crossroads bug.</h3>
+            <p>I entered the Fully Autonomous Car category, my first time working on autonomous systems. A trophy would have been nice; learning how to make a car drive itself was the real goal.</p>
+
+            <div class="log reveal" role="img" aria-label="Build log of the autonomous car">
+              <div class="log-bar"><i></i><i></i><i></i><span>autonomous-car — build.log</span></div>
+              <div class="log-body">
+                <span class="ln cmd" style="--i:0">$ ./autonomous-car --track test</span>
+                <span class="ln" style="--i:1"><span class="err">[FAIL]</span> intersection read as off-road → car drives into a wall</span>
+                <span class="ln" style="--i:2"><span class="wip">[ .. ]</span> 7 days of debugging · ideas from teachers, friends, family</span>
+                <span class="ln" style="--i:3"><span class="wip">[ .. ]</span> seriously considered shelving the project</span>
+                <span class="ln" style="--i:4"><span class="ok">[ OK ]</span> wrote a new vision-debugger algorithm → intersections detected</span>
+                <span class="ln" style="--i:5"><span class="ok">[ OK ]</span> ~3 months of iteration → race-ready</span>
+                <span class="ln" style="--i:6"><span class="err">[FAIL]</span> race day: lighting far brighter than in testing → no response</span>
+                <span class="ln" style="--i:7"><span class="ok">[ OK ]</span> patched after the test window closed · too late to score</span>
+                <span class="ln" style="--i:8"><span class="ok">[ OK ]</span> result: no trophy · lessons kept</span>
+              </div>
+            </div>
+
+            <p>The road-detection logic I started with simply couldn't handle intersections, so I rebuilt it. Race day exposed the next weak spot — light. <strong>No trophy this time, but plenty of lessons a win wouldn't have taught me.</strong></p>
+
+            <div class="spec">
+              <h4>Under the hood</h4>
+              <p>Designing a Rust-based PID controller and attempting to integrate a Hailo-8 AI accelerator (YOLOv8) via PyO3 on a Raspberry Pi 5 served as an invaluable, hands-on learning experience in hardware integration.</p>
+              <div class="chips"><span>Rust</span><span>PID control</span><span>Raspberry Pi 5</span><span>Hailo-8</span><span>YOLOv8</span><span>PyO3</span></div>
+            </div>
+          </div>
+        </article>
+
+        <!-- 06 -->
+        <article class="chapter" id="ch-06">
+          <span class="node" aria-hidden="true"></span>
+          <div class="ch-meta reveal">
+            <span class="num">06</span>
+            <span class="when">now</span>
+            <span class="branch-tag">many options</span>
+          </div>
+          <div class="ch-body reveal">
+            <h3>The branches keep multiplying.</h3>
+            <p>Since then, every project has been one more path I made for myself.</p>
+            <ul class="tree">
+              <li class="gold"><a href="#singapore"><span class="b-name">horizons-arcana</span><span class="b-desc">1st place · Singapore</span></a></li>
+              <li><a href="#experience"><span class="b-name">kodelig-26</span><span class="b-desc">Kocaeli National Robotics Competition</span></a></li>
+              <li><a href="#work"><span class="b-name">oryxis</span><span class="b-desc">LLM engine in Rust</span></a></li>
+              <li><a href="#work"><span class="b-name">trigox</span><span class="b-desc">desktop automation · Tauri</span></a></li>
+              <li><a href="#work"><span class="b-name">meda</span><span class="b-desc">medical exercise interface</span></a></li>
+              <li><a href="#work"><span class="b-name">mrcs · makereadme · sound-of-your-hardware</span><span class="b-desc">and more</span></a></li>
+            </ul>
+          </div>
+        </article>
+      </div>
     </div>
   </section>
 
-  <!-- FEATURED PROJECTS -->
-  <section id="projects">
-    <div class="section-header reveal">
-      <h2 class="section-title">Featured Work</h2>
+  <!-- SINGAPORE -->
+  <section id="singapore" class="sg">
+    <div class="wrap sg-grid">
+      <div class="reveal">
+        <p class="eyebrow">// 02 — highlight</p>
+        <div class="sg-place" aria-hidden="true">1<sup>st</sup></div>
+        <p class="sg-coords">1.3521° N, 103.8198° E · Singapore · 2026</p>
+        <h2>Hack Club Horizons Arcana</h2>
+        <p>Secured 1st place at the international coding conference and hackathon organized by the Hack Club global developer community.</p>
+        <p class="bridge">From the shop counter in Turkey to first place in Singapore.</p>
+      </div>
+      <div class="gallery reveal" id="gallery" data-count="3">
+        <figure class="ph"><img src="pic1.png" alt="Hack Club Horizons Arcana in Singapore" loading="lazy"></figure>
+        <figure class="ph"><img src="pic2.png" alt="Hack Club Horizons Arcana in Singapore" loading="lazy"></figure>
+        <figure class="ph"><img src="pic3.png" alt="Hack Club Horizons Arcana in Singapore" loading="lazy"></figure>
+      </div>
     </div>
+  </section>
 
-    <div class="grid-2">
-      
-      <div class="card reveal">
-        <div class="card-header">
-          <h3 class="card-title"><a href="https://github.com/CSDC-K/Oryxis" target="_blank">Oryxis</a></h3>
-          <span class="tag">Rust / Systems</span>
+  <!-- WORK -->
+  <section id="work">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <p class="eyebrow">// 03 — featured work</p>
+        <h2 class="section-title">Things I've <em>built.</em></h2>
+      </div>
+
+      <div class="grid-2">
+        <div class="card reveal">
+          <div class="card-header">
+            <h3 class="card-title"><a href="https://github.com/CSDC-K/Oryxis" target="_blank" rel="noopener">Oryxis <span class="arrow">↗</span></a></h3>
+            <span class="tag">Rust / Systems</span>
+          </div>
+          <p>An experimental engine built entirely in Rust, designed to talk with Large Language Models (LLMs) via API. Focuses on memory-efficient execution layers and Jarvis-like architectures.</p>
+          <div class="chips"><span>Rust</span><span>ROCm</span><span>Vulkan</span></div>
         </div>
-        <p>
-          An experimental engine built entirely in Rust, designed to talk with Large Language Models (LLMs) via api. Focuses on memory-efficient execution layers and jarvis-like architectures.
-        </p>
-        <div class="tech-stack-mini">
-          <span class="tech-pill">Rust</span> • 
-          <span class="tech-pill">ROCm</span> • 
-          <span class="tech-pill">Vulkan</span>
+
+        <div class="card reveal">
+          <div class="card-header">
+            <h3 class="card-title">Trigox</h3>
+            <span class="tag">Desktop / Automation</span>
+          </div>
+          <p>A powerful desktop automation tool built on the Tauri framework. It utilizes a high-performance Rust backend to monitor system triggers — such as file and folder changes or application states — and automatically executes actions like webhooks, shell scripts, notifications, and custom sounds.</p>
+          <div class="chips"><span>Tauri</span><span>TypeScript</span><span>Rust</span></div>
+        </div>
+
+        <div class="card reveal">
+          <div class="card-header">
+            <h3 class="card-title">MEDA (Medical Exercise Interface)</h3>
+            <span class="tag">Software</span>
+          </div>
+          <p>A healthcare software project bridging a physician interface with patient tracking. Designed with a dynamic UI in Python (CustomTkinter) and backed by secure data processing services written in Rust.</p>
+          <div class="chips"><span>Python</span><span>CustomTkinter</span><span>Rust</span></div>
+        </div>
+
+        <div class="card reveal">
+          <div class="card-header">
+            <h3 class="card-title">Autonomous Vehicle Platform</h3>
+            <span class="tag">Learning / Experience</span>
+          </div>
+          <p>My first foray into autonomous systems for the 18th International MEB Robot Competition. While the project ultimately failed to meet its functional goals, designing a Rust-based PID controller and attempting to integrate a Hailo-8 AI accelerator (YOLOv8) via PyO3 on a Raspberry Pi 5 served as an invaluable, hands-on learning experience in hardware integration.</p>
+          <a class="story-link" href="#ch-05">↑ read what happened on race day</a>
+          <div class="chips"><span>Rust</span><span>Raspberry Pi 5</span><span>Hailo-8</span><span>PyO3</span></div>
         </div>
       </div>
 
-      <div class="card reveal">
-        <div class="card-header">
-          <h3 class="card-title">Trigox</h3>
-          <span class="tag">Desktop / Automation</span>
+      <div class="grid-3">
+        <div class="card reveal">
+          <div class="card-header">
+            <h3 class="card-title"><a href="https://github.com/CSDC-K/EWUT" target="_blank" rel="noopener">Makereadme <span class="arrow">↗</span></a></h3>
+            <span class="tag">Rust</span>
+          </div>
+          <p>Agentic flow to making readme files for projects.</p>
         </div>
-        <p>
-          A powerful desktop automation tool built on the Tauri framework. It utilizes a high-performance Rust backend to monitor system triggers—such as file and folder changes or application states—and automatically executes actions like webhooks, shell scripts, notifications, and custom sounds.
-        </p>
-        <div class="tech-stack-mini">
-          <span class="tech-pill">Tauri</span> •
-          <span class="tech-pill">TypeScript</span> •
-          <span class="tech-pill">Rust</span>
+
+        <div class="card reveal">
+          <div class="card-header">
+            <h3 class="card-title"><a href="https://github.com/CSDC-K/Multiple-Remote-Control-System" target="_blank" rel="noopener">MRCS <span class="arrow">↗</span></a></h3>
+            <span class="tag">Python/Rust</span>
+          </div>
+          <p>A tool for remote management, screen sharing, and file transfer across devices on a local network.</p>
+        </div>
+
+        <div class="card reveal">
+          <div class="card-header">
+            <h3 class="card-title"><a href="https://github.com/CSDC-K/TheSoundOfYourHardware" target="_blank" rel="noopener">SoundOfYourHardware <span class="arrow">↗</span></a></h3>
+            <span class="tag">Tauri</span>
+          </div>
+          <p>A fun project: when your hardware usage gets too high, it plays some funny sounds you've chosen.</p>
         </div>
       </div>
-
-      <div class="card reveal">
-        <div class="card-header">
-          <h3 class="card-title">MEDA (Medical Exercise Interface)</h3>
-          <span class="tag">Software</span>
-        </div>
-        <p>
-          A healthcare software project bridging a physician interface with patient tracking. Designed with a dynamic UI in Python (CustomTkinter) and backed by secure data processing services written in Rust.
-        </p>
-        <div class="tech-stack-mini">
-          <span class="tech-pill">Python</span> • 
-          <span class="tech-pill">CustomTkinter</span> • 
-          <span class="tech-pill">Rust</span>
-        </div>
-      </div>
-
-      <div class="card reveal">
-        <div class="card-header">
-          <h3 class="card-title">Autonomous Vehicle Platform</h3>
-          <span class="tag">Learning / Experience</span>
-        </div>
-        <p>
-          My first foray into autonomous systems for the 18th International MEB Robot Competition. While the project ultimately failed to meet its functional goals, designing a Rust-based PID controller and attempting to integrate a Hailo-8 AI accelerator (YOLOv8) via PyO3 on a Raspberry Pi 5 served as an invaluable, hands-on learning experience in hardware integration.
-        </p>
-        <div class="tech-stack-mini">
-          <span class="tech-pill">Rust</span> • 
-          <span class="tech-pill">Raspberry Pi 5</span> • 
-          <span class="tech-pill">Hailo-8</span> • 
-          <span class="tech-pill">PyO3</span>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- REPOSITORIES GRID -->
-    <div style="margin-top: 2rem;"></div>
-    <div class="grid-3">
-      <div class="card reveal">
-        <div class="card-header">
-          <h3 class="card-title"><a href="https://github.com/CSDC-K/EWUT" target="_blank">Makereadme</a></h3>
-          <span class="tag">Rust</span>
-        </div>
-        <p>Agentic flow to making readme files for projects.</p>
-      </div>
-
-      <div class="card reveal">
-        <div class="card-header">
-          <h3 class="card-title"><a href="https://github.com/CSDC-K/Multiple-Remote-Control-System" target="_blank">MRCS</a></h3>
-          <span class="tag">Python/Rust</span>
-        </div>
-        <p>A tool for remote management, screen sharing, and file transfer across devices on a local network.</p>
-      </div>
-
-  <div class="card reveal">
-    <div class="card-header">
-      <h2 class="card-title"><a href="https://github.com/CSDC-K/TheSoundOfYourHardware" target="_blank">SoundOfYourHardware </a></h2>
-      <span class="tag">Tauri</span>
-    </div>
-    <p>a fun project about when your hardware usage gets too high it plays some funny sounds you've chosen</p>
-  </div>
     </div>
   </section>
 
   <!-- EXPERIENCE & AWARDS -->
   <section id="experience">
-    <div class="section-header reveal">
-      <h2 class="section-title">Experience & Awards</h2>
-    </div>
-
-    <div class="timeline">
-
-      <div class="timeline-item reveal">
-        <div class="timeline-date">2026</div>
-        <div class="timeline-content">
-          <h3>1st Place Winner — Hack Club Horizons Arcana (Singapore)</h3>
-          <p>Secured 1st place at the international coding conference and hackathon organized by the Hack Club global developer community.</p>
-        </div>
+    <div class="wrap">
+      <div class="section-head reveal">
+        <p class="eyebrow">// 04 — the record</p>
+        <h2 class="section-title">Experience &amp; <em>Awards.</em></h2>
       </div>
 
-      <div class="timeline-item reveal">
-        <div class="timeline-date">2026</div>
-        <div class="timeline-content">
-          <h3>KodeLig '26 — Kocaeli National Robotics Competition</h3>
-          <p>Participant in the national robotics technology event focused on autonomous systems.</p>
-        </div>
-      </div>
-      
-      <div class="timeline-item reveal">
-        <div class="timeline-date">2026</div>
-        <div class="timeline-content">
-          <h3>18th International MEB Robot Competition</h3>
-          <p>Competed in the Autonomous Vehicle Category. Built a software architecture using a Raspberry Pi 5, Hailo-8 AI Accelerator, and Rust.</p>
-        </div>
-      </div>
-
-      <div class="timeline-item reveal">
-        <div class="timeline-date">2025</div>
-        <div class="timeline-content">
-          <h3>2nd Place — 17th International MEB Robot Competition</h3>
-          <p>Secured 2nd place internationally in the Mini-Sumo category. Focused on low-level sensor fusion and real-time control algorithms.</p>
-        </div>
-      </div>
-      
-      <div class="timeline-item reveal">
-        <div class="timeline-date">2025</div>
-        <div class="timeline-content">
-          <h3>3rd Place — DIY Kütahya</h3>
-          <p>Achieved 3rd place in both the Mini-Sumo and Maze Master robotics categories.</p>
-        </div>
-      </div>
-
-      <div class="timeline-item reveal">
-        <div class="timeline-date">2024</div>
-        <div class="timeline-content">
-          <h3>Presenter — TÜBİTAK 4006 Science Fair</h3>
-          <p>Presented technical demonstrations of multiple personal robotics and system software projects.</p>
-        </div>
-      </div>
-
+      <ul class="record">
+        <li class="reveal">
+          <span class="yr">2026</span>
+          <div>
+            <h3>1st Place Winner — Hack Club Horizons Arcana (Singapore)</h3>
+            <p>Secured 1st place at the international coding conference and hackathon organized by the Hack Club global developer community.</p>
+          </div>
+          <span class="rank">1st</span>
+        </li>
+        <li class="reveal">
+          <span class="yr">2026</span>
+          <div>
+            <h3>KodeLig '26 — Kocaeli National Robotics Competition</h3>
+            <p>Participant in the national robotics technology event focused on autonomous systems.</p>
+          </div>
+          <span class="rank none">participant</span>
+        </li>
+        <li class="reveal">
+          <span class="yr">2026</span>
+          <div>
+            <h3>18th International MEB Robot Competition</h3>
+            <p>Competed in the Autonomous Vehicle Category. Built a software architecture using a Raspberry Pi 5, Hailo-8 AI Accelerator, and Rust.</p>
+          </div>
+          <span class="rank none">competitor</span>
+        </li>
+        <li class="reveal">
+          <span class="yr">2025</span>
+          <div>
+            <h3>2nd Place — 17th International MEB Robot Competition</h3>
+            <p>Secured 2nd place internationally in the Mini-Sumo category. Focused on low-level sensor fusion and real-time control algorithms.</p>
+          </div>
+          <span class="rank">2nd</span>
+        </li>
+        <li class="reveal">
+          <span class="yr">2025</span>
+          <div>
+            <h3>3rd Place — DIY Kütahya</h3>
+            <p>Achieved 3rd place in both the Mini-Sumo and Maze Master robotics categories.</p>
+          </div>
+          <span class="rank">3rd</span>
+        </li>
+        <li class="reveal">
+          <span class="yr">2024</span>
+          <div>
+            <h3>Presenter — TÜBİTAK 4006 Science Fair</h3>
+            <p>Presented technical demonstrations of multiple personal robotics and system software projects.</p>
+          </div>
+          <span class="rank none">presenter</span>
+        </li>
+      </ul>
     </div>
   </section>
 
   <!-- SKILLS -->
   <section id="skills">
-    <div class="section-header reveal">
-      <h2 class="section-title">Technical Skills</h2>
-    </div>
-
-    <div class="skills-grid reveal">
-      <div class="skill-category">
-        <h4>Languages</h4>
-        <div class="skill-tags">
-          <span>Rust</span>
-          <span>Python</span>
-          <span>TypeScript</span>
-          <span>C#</span>
-        </div>
+    <div class="wrap">
+      <div class="section-head reveal">
+        <p class="eyebrow">// 05 — toolbox</p>
+        <h2 class="section-title">Technical <em>Skills.</em></h2>
       </div>
 
-      <div class="skill-category">
-        <h4>Hardware & AI</h4>
-        <div class="skill-tags">
-          <span>Raspberry Pi 5</span>
-          <span>Hailo-8 AI</span>
-          <span>NVIDIA Jetson</span>
-          <span>YOLOv8</span>
-          <span>PyO3</span>
+      <div class="skills-grid">
+        <div class="skill-category reveal">
+          <h4>Languages</h4>
+          <div class="skill-tags">
+            <span>Rust</span>
+            <span>Python</span>
+            <span>TypeScript</span>
+            <span>C#</span>
+          </div>
         </div>
-      </div>
 
-      <div class="skill-category">
-        <h4>Environment & Tools</h4>
-        <div class="skill-tags">
-          <span>Arch Linux</span>
-          <span>CachyOS</span>
-          <span>Tauri</span>
-          <span>Git / GitHub</span>
-          <span>Vulkan / ROCm</span>
+        <div class="skill-category reveal">
+          <h4>Hardware &amp; AI</h4>
+          <div class="skill-tags">
+            <span>Raspberry Pi 5</span>
+            <span>Hailo-8 AI</span>
+            <span>NVIDIA Jetson</span>
+            <span>YOLOv8</span>
+            <span>PyO3</span>
+          </div>
+        </div>
+
+        <div class="skill-category reveal">
+          <h4>Environment &amp; Tools</h4>
+          <div class="skill-tags">
+            <span>Arch Linux</span>
+            <span>CachyOS</span>
+            <span>Tauri</span>
+            <span>Git / GitHub</span>
+            <span>Vulkan / ROCm</span>
+          </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- FOOTER -->
-  <footer id="contact">
-    <div>
-      © 2026 Kuzey Ceylan. All rights reserved.
-    </div>
-    <div style="display: flex; gap: 1.2rem;">
-      <a href="https://github.com/CSDC-K" target="_blank" rel="noopener">GitHub</a>
-      <a href="mailto:contact@kuzey.dev">Email</a>
-    </div>
-  </footer>
-
 </main>
 
+<!-- CONTACT -->
+<footer id="contact" class="contact">
+  <div class="wrap">
+    <p class="eyebrow reveal">// 06 — contact</p>
+    <h2 class="cta reveal">One option at eleven.<br><em>Now I build them.</em></h2>
+    <a class="mail reveal" href="mailto:contact@kuzey.dev">contact@kuzey.dev ↗</a>
+    <div class="foot">
+      <span>© 2026 Kuzey Ceylan. All rights reserved.</span>
+      <span class="links">
+        <a href="https://github.com/CSDC-K" target="_blank" rel="noopener">GitHub</a>
+        <a href="mailto:contact@kuzey.dev">Email</a>
+      </span>
+    </div>
+  </div>
+</footer>
+
+<div class="lightbox" id="lightbox" hidden>
+  <img alt="">
+  <button type="button" aria-label="Close">×</button>
+</div>
+
 <script>
-  // Dynamic Canvas Background (Subtle Dust Particles & Starfield)
-  const canvas = document.getElementById('bg-canvas');
-  const ctx = canvas.getContext('2d');
+  const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  function resize() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+  // Nav: scroll progress, solid background, mobile menu
+  const nav = document.getElementById('nav');
+  const bar = document.getElementById('progress');
+  const menuBtn = document.getElementById('menu-btn');
+  const navLinks = document.getElementById('nav-links');
+
+  menuBtn.addEventListener('click', () => {
+    const open = navLinks.classList.toggle('open');
+    menuBtn.setAttribute('aria-expanded', open);
+    menuBtn.textContent = open ? 'close' : 'menu';
+  });
+  navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+    navLinks.classList.remove('open');
+    menuBtn.setAttribute('aria-expanded', false);
+    menuBtn.textContent = 'menu';
+  }));
+
+  // Story rail: fills as you read, nodes light up as chapters pass
+  const story = document.querySelector('.story');
+  const railFill = document.getElementById('rail-fill');
+  const chapters = [...document.querySelectorAll('.chapter')];
+
+  let ticking = false;
+  function onScroll() {
+    const vh = innerHeight;
+    const max = document.documentElement.scrollHeight - vh;
+    bar.style.transform = `scaleX(${max > 0 ? scrollY / max : 0})`;
+    nav.classList.toggle('scrolled', scrollY > 24);
+
+    const r = story.getBoundingClientRect();
+    const p = Math.min(1, Math.max(0, (vh * 0.55 - r.top) / r.height));
+    railFill.style.transform = `scaleY(${p})`;
+    chapters.forEach(ch => ch.classList.toggle('on', ch.getBoundingClientRect().top < vh * 0.55));
+    ticking = false;
   }
-  resize();
-  window.addEventListener('resize', resize);
+  addEventListener('scroll', () => {
+    if (!ticking) { requestAnimationFrame(onScroll); ticking = true; }
+  }, { passive: true });
+  addEventListener('resize', onScroll);
+  onScroll();
 
-  const particles = [];
-  const particleCount = Math.min(window.innerWidth / 12, 80);
-
-  for (let i = 0; i < particleCount; i++) {
-    particles.push({
-      x: Math.random() * canvas.width,
-      y: Math.random() * canvas.height,
-      radius: Math.random() * 1.2 + 0.3,
-      alpha: Math.random() * 0.5 + 0.2,
-      vx: (Math.random() - 0.5) * 0.2,
-      vy: (Math.random() - 0.5) * 0.2
-    });
-  }
-
-  function render() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    particles.forEach(p => {
-      p.x += p.vx;
-      p.y += p.vy;
-
-      if (p.x < 0) p.x = canvas.width;
-      if (p.x > canvas.width) p.x = 0;
-      if (p.y < 0) p.y = canvas.height;
-      if (p.y > canvas.height) p.y = 0;
-
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(167, 139, 250, ${p.alpha})`;
-      ctx.fill();
-    });
-
-    requestAnimationFrame(render);
-  }
-  render();
-
-  // Scroll Reveal Observer
-  const observerOptions = { threshold: 0.1 };
-  const observer = new IntersectionObserver((entries) => {
+  // Scroll reveal
+  const revealObserver = new IntersectionObserver(entries => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
         entry.target.classList.add('visible');
+        revealObserver.unobserve(entry.target);
       }
     });
-  }, observerOptions);
+  }, { threshold: 0.12, rootMargin: '0px 0px -6% 0px' });
+  document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
 
-  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  // Card spotlight
+  document.querySelectorAll('.card').forEach(card => {
+    card.addEventListener('pointermove', e => {
+      const r = card.getBoundingClientRect();
+      card.style.setProperty('--mx', `${e.clientX - r.left}px`);
+      card.style.setProperty('--my', `${e.clientY - r.top}px`);
+    });
+  });
+
+  // Singapore gallery: drop photos that don't exist yet, relayout for what's left
+  const gallery = document.getElementById('gallery');
+  const lightbox = document.getElementById('lightbox');
+  const lightboxImg = lightbox.querySelector('img');
+
+  function dropPhoto(img) {
+    const fig = img.closest('.ph');
+    if (!fig || !fig.parentNode) return;
+    fig.remove();
+    gallery.dataset.count = gallery.querySelectorAll('.ph').length;
+  }
+  gallery.querySelectorAll('img').forEach(img => {
+    img.addEventListener('error', () => dropPhoto(img));
+    if (img.complete && img.naturalWidth === 0 && img.currentSrc) dropPhoto(img);
+    img.closest('.ph').addEventListener('click', () => {
+      lightboxImg.src = img.currentSrc || img.src;
+      lightboxImg.alt = img.alt;
+      lightbox.hidden = false;
+    });
+  });
+  lightbox.addEventListener('click', () => { lightbox.hidden = true; });
+  addEventListener('keydown', e => { if (e.key === 'Escape') lightbox.hidden = true; });
+
+  // Hero background: circuit traces growing from a single line into many branches
+  (() => {
+    const hero = document.querySelector('.hero');
+    const cvs = document.getElementById('traces');
+    const ctx = cvs.getContext('2d');
+    const counter = document.querySelector('#opt-count b');
+    const STEP = 18;
+    const RGB = '200,245,66';
+    // E, NE, N, NW, W, SW, S, SE (screen coordinates, y grows downward)
+    const DIRS = [[1, 0], [1, -1], [0, -1], [-1, -1], [-1, 0], [-1, 1], [0, 1], [1, 1]];
+    const UP = d => d <= 4;
+
+    let W, H, dpr, cols, rows, ox, grid, off, octx;
+    let paths, walkers, pulses, maxPaths, stalls, done, acc, last, raf, visible = true, lastWidth = 0;
+
+    const free = (c, r) => c >= 0 && r >= 0 && c < cols && r < rows && !grid[r * cols + c];
+    const X = c => ox + c * STEP;
+    const Y = r => r * STEP + STEP / 2;
+    const turn = (d, k) => (d + k + 8) % 8;
+
+    function setup() {
+      dpr = Math.min(devicePixelRatio || 1, 2);
+      W = hero.clientWidth;
+      H = hero.clientHeight;
+      lastWidth = W;
+      cvs.width = W * dpr;
+      cvs.height = H * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      off = document.createElement('canvas');
+      off.width = cvs.width;
+      off.height = cvs.height;
+      octx = off.getContext('2d');
+      octx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      octx.lineCap = 'round';
+      octx.lineJoin = 'round';
+
+      cols = Math.floor(W / STEP);
+      rows = Math.floor(H / STEP);
+      ox = (W - (cols - 1) * STEP) / 2;
+      grid = new Uint8Array(cols * rows);
+      paths = [];
+      walkers = [];
+      pulses = [];
+      stalls = 0;
+      done = false;
+      acc = 0;
+      last = performance.now();
+      maxPaths = Math.max(40, Math.min(170, Math.round(W * H / 8500)));
+
+      const c0 = Math.round(cols * (W > 900 ? 0.72 : 0.5));
+      const r0 = rows - 1;
+      grid[r0 * cols + c0] = 1;
+      spawn(c0, r0, 2, 0, rows);
+    }
+
+    function spawn(c, r, d, depth, life) {
+      const path = { pts: [[c, r]], depth };
+      paths.push(path);
+      walkers.push({ c, r, d, depth, life: life || 4 + (Math.random() * 16 | 0), path });
+    }
+
+    function via(w) {
+      octx.beginPath();
+      octx.arc(X(w.c), Y(w.r), 2.6, 0, Math.PI * 2);
+      octx.fillStyle = '#08080a';
+      octx.fill();
+      octx.strokeStyle = `rgba(${RGB},${Math.max(0.25, 0.6 - w.depth * 0.05)})`;
+      octx.lineWidth = 1.2;
+      octx.stroke();
+    }
+
+    function advance(w) {
+      if (Math.random() < 0.16) {
+        const nd = turn(w.d, Math.random() < 0.5 ? 1 : -1);
+        if (UP(nd)) w.d = nd;
+      }
+      const [dx, dy] = DIRS[w.d];
+      const nc = w.c + dx, nr = w.r + dy;
+      const crosses = dx && dy && !free(w.c + dx, w.r) && !free(w.c, w.r + dy);
+      if (w.life-- <= 0 || !free(nc, nr) || crosses) { via(w); return false; }
+
+      grid[nr * cols + nc] = 1;
+      octx.beginPath();
+      octx.moveTo(X(w.c), Y(w.r));
+      octx.lineTo(X(nc), Y(nr));
+      octx.strokeStyle = `rgba(${RGB},${Math.max(0.16, 0.55 - w.depth * 0.06)})`;
+      octx.lineWidth = Math.max(1, 2.2 - w.depth * 0.25);
+      octx.stroke();
+      w.c = nc;
+      w.r = nr;
+      w.path.pts.push([nc, nr]);
+
+      if (paths.length < maxPaths && Math.random() < 0.13) {
+        const nd = turn(w.d, (Math.random() < 0.5 ? 1 : -1) * (Math.random() < 0.7 ? 1 : 2));
+        if (UP(nd)) spawn(w.c, w.r, nd, w.depth + 1);
+      }
+      return true;
+    }
+
+    function grow() {
+      walkers = walkers.filter(advance);
+      // keep a few lines growing: branch again from somewhere on an existing line
+      for (let tries = 0; walkers.length < 5 && tries < 12; tries++) {
+        if (paths.length >= maxPaths || stalls > 300) break;
+        const p = paths[Math.random() * paths.length | 0];
+        const [c, r] = p.pts[Math.random() * p.pts.length | 0];
+        const d = Math.random() * 5 | 0;
+        const [dx, dy] = DIRS[d];
+        if (free(c + dx, r + dy)) { spawn(c, r, d, p.depth + 1); stalls = 0; } else stalls++;
+      }
+      if (!walkers.length) done = true;
+      counter.textContent = paths.length;
+    }
+
+    function drawPulses() {
+      if (pulses.length < 7 && Math.random() < 0.05) {
+        const p = paths[Math.random() * paths.length | 0];
+        if (p && p.pts.length > 5) pulses.push({ p, t: 0, v: 0.12 + Math.random() * 0.12 });
+      }
+      pulses = pulses.filter(q => {
+        q.t += q.v;
+        const i = Math.floor(q.t);
+        if (i >= q.p.pts.length - 1) return false;
+        const f = q.t - i;
+        const [c1, r1] = q.p.pts[i], [c2, r2] = q.p.pts[i + 1];
+        const x = X(c1) + (X(c2) - X(c1)) * f;
+        const y = Y(r1) + (Y(r2) - Y(r1)) * f;
+        const g = ctx.createRadialGradient(x, y, 0, x, y, 10);
+        g.addColorStop(0, `rgba(${RGB},0.9)`);
+        g.addColorStop(1, `rgba(${RGB},0)`);
+        ctx.fillStyle = g;
+        ctx.fillRect(x - 10, y - 10, 20, 20);
+        return true;
+      });
+    }
+
+    function frame(now) {
+      raf = null;
+      if (!visible || !off || !off.width || !off.height) return;
+      const dt = Math.min(100, now - last);
+      last = now;
+      if (!done) {
+        acc += dt;
+        while (acc > 22) { grow(); acc -= 22; if (done) break; }
+      }
+      ctx.clearRect(0, 0, W, H);
+      ctx.drawImage(off, 0, 0, W, H);
+      if (!done) {
+        ctx.fillStyle = `rgba(${RGB},0.95)`;
+        walkers.forEach(w => { ctx.beginPath(); ctx.arc(X(w.c), Y(w.r), 2.2, 0, Math.PI * 2); ctx.fill(); });
+      }
+      drawPulses();
+      raf = requestAnimationFrame(frame);
+    }
+
+    function start() {
+      if (!hero.clientWidth || !hero.clientHeight) { lastWidth = 0; return; }
+      setup();
+      if (reduceMotion) {
+        while (!done) grow();
+        ctx.clearRect(0, 0, W, H);
+        ctx.drawImage(off, 0, 0, W, H);
+        return;
+      }
+      if (!raf) raf = requestAnimationFrame(frame);
+    }
+
+    new IntersectionObserver(([e]) => {
+      visible = e.isIntersecting;
+      if (visible && !off) start();
+      if (visible && !raf && !reduceMotion) { last = performance.now(); raf = requestAnimationFrame(frame); }
+    }).observe(hero);
+
+    let resizeTimer;
+    addEventListener('resize', () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        if (Math.abs(hero.clientWidth - lastWidth) > 40) start();
+      }, 200);
+    });
+
+    start();
+  })();
 </script>
 
 </body>
